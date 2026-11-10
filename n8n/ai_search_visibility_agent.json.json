@@ -1,0 +1,539 @@
+{
+  "name": "AI Search Visibility Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "AI Search Visibility Report",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "brand",
+              "placeholder": "Zalando"
+            },
+            {
+              "fieldLabel": "competitors",
+              "placeholder": "ABOUT YOU, ASOS"
+            },
+            {
+              "fieldLabel": "country",
+              "placeholder": "Germany"
+            },
+            {
+              "fieldLabel": "queries",
+              "fieldType": "textarea",
+              "placeholder": "one query per line"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7ab44ec5-4665-48ac-8b6b-5e1fa310f7e8",
+      "name": "On form submission",
+      "webhookId": "d5fb87b2-80f8-4360-a66b-952d1ce1bf02"
+    },
+    {
+      "parameters": {
+        "jsCode": "const f = $input.first().json;\n\nconst brand = (f.brand || '').trim();\nconst country = (f.country || '').trim();\nconst competitors = (f.competitors || '')\n  .split(',').map(c => c.trim()).filter(c => c);\nconst queries = (f.queries || '')\n  .split('\\n').map(q => q.trim()).filter(q => q);\n\n// Validation: stop with a clear message if input is missing\nif (!brand || !country || competitors.length === 0 || queries.length === 0) {\n  throw new Error('Missing input: brand, country, competitors and queries are required.');\n}\n\n// One item per query\nreturn queries.map(query => ({\n  json: { brand, competitors, allBrands: [brand, ...competitors], country, query }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f5bf8c55-518c-40c0-bed5-e1e02c841fc6",
+      "name": "Clean & validate input"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputs = $('Clean & validate input').all();\n\nreturn $input.all().map((item, i) => {\n  const info = inputs[i].json;\n  const organic = item.json.organic || [];\n\n  // Find each brand's position (by title or link)\n  const positions = {};\n  for (const b of info.allBrands) {\n    const key = b.toLowerCase().replace(/\\s+/g, '');\n    const hit = organic.find(r =>\n      (r.title + ' ' + r.link).toLowerCase().replace(/\\s+/g, '').includes(key)\n    );\n    positions[b] = hit ? hit.position : 'not in top 10';\n  }\n\n  return {\n    json: {\n      query: info.query,\n      brand: info.brand,\n      allBrands: info.allBrands,\n      country: info.country,\n      google_positions: positions,\n      google_top3: organic.slice(0, 3).map(r => r.title),\n      google_error: organic.length ? null : 'Serper data missing',\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "e52abb3d-3587-4a14-8b89-8a5f5921d198",
+      "name": "Extract Google positions"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://google.serper.dev/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=q",
+              "value": "={{ $json.query }}"
+            },
+            {
+              "name": "gl",
+              "value": "de"
+            },
+            {
+              "name": "num",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "e705722b-7d64-484d-a83b-f804477ab781",
+      "name": "Serper - Google results",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "98EFrtjJOJLbio2P",
+          "name": "Serper API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "=user",
+              "content": "={{ $json.country }}. {{ $json.query }}? Give me a short answer with specific brand or shop names."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        896,
+        0
+      ],
+      "id": "c547626c-77eb-4a1d-b130-2bdae5dc1481",
+      "name": "OpenAI - AI answer check",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "openAiApi": {
+          "id": "d9Xnbeh0eP2qTFxB",
+          "name": "OpenAi account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const google = $('Extract Google positions').all();\n\nreturn $input.all().map((item, i) => {\n  const g = google[i].json;\n  const text = item.json.output?.[0]?.content?.[0]?.text || '';\n  const lower = text.toLowerCase();\n\n  // Order in which tracked brands appear in the AI answer\n  const found = g.allBrands\n    .map(b => ({ b, idx: lower.indexOf(b.toLowerCase()) }))\n    .filter(x => x.idx >= 0)\n    .sort((a, b) => a.idx - b.idx);\n\n  const ai_mentions = {};\n  for (const b of g.allBrands) {\n    const rank = found.findIndex(x => x.b === b);\n    ai_mentions[b] = rank >= 0 ? `mentioned (#${rank + 1})` : 'not mentioned';\n  }\n\n  return {\n    json: {\n      ...g,\n      ai_answer: text,\n      ai_mentions,\n      ai_error: text ? null : 'AI answer missing',\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        0
+      ],
+      "id": "480dfc3b-88f5-4928-873f-91bcce1c9647",
+      "name": "Combine Google + AI"
+    },
+    {
+      "parameters": {
+        "jsCode": "const first = $input.first().json;\n\nreturn first.allBrands.map(b => ({\n  json: { brandName: b }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        0
+      ],
+      "id": "fc8da041-30ee-490f-984c-aba0a841b244",
+      "name": "Brands for news"
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/everything",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "=q",
+              "value": "=\"{{ $json.brandName }}\" AND (fashion OR retail OR shopping OR ecommerce)"
+            },
+            {
+              "name": "sortBy",
+              "value": "publishedAt"
+            },
+            {
+              "name": "pageSize",
+              "value": "10"
+            },
+            {
+              "name": "searchIn",
+              "value": "title,description"
+            },
+            {
+              "name": "language",
+              "value": "en"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1696,
+        0
+      ],
+      "id": "04500f67-a095-4b61-88bc-f9c657e884a1",
+      "name": "NewsAPI - brand news",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yIYNBIMFCasFRscH",
+          "name": "NewsAPI"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const brands = $('Brands for news').all().map(i => i.json.brandName);\nconst queries = $('Combine Google + AI').all().map(i => i.json);\n\n// Keep only news that really mention the brand\nconst news = {};\n$input.all().forEach((item, i) => {\n  const b = brands[i];\n  const key = b.toLowerCase();\n  if (item.json.error) {\n    news[b] = 'News data missing (API error)';\n    return;\n  }\n  const relevant = (item.json.articles || [])\n    .filter(a => {\n      const text = (a.title || '') + ' ' + (a.description || '');\n      // Brands written in capitals (e.g. ABOUT YOU) must match exactly\n      const strict = b === b.toUpperCase() && b.length > 4;\n      return strict ? text.includes(b) : text.toLowerCase().includes(key);\n    })\n    .slice(0, 3)\n    .map(a => ({\n      title: a.title,\n      source: a.source?.name,\n      date: (a.publishedAt || '').slice(0, 10),\n      url: a.url,\n    }));\n  news[b] = relevant.length ? relevant : 'No relevant news found';\n});\n\n// Put everything into one package for the report\nconst first = queries[0];\nreturn [{\n  json: {\n    brand: first.brand,\n    competitors: first.allBrands.slice(1),\n    country: first.country,\n    date: new Date().toISOString().slice(0, 10),\n    results: queries.map(q => ({\n      query: q.query,\n      google_positions: q.google_positions,\n      google_top3: q.google_top3,\n      ai_mentions: q.ai_mentions,\n      ai_answer: q.ai_answer,\n      errors: [q.google_error, q.ai_error].filter(Boolean),\n    })),\n    news,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        0
+      ],
+      "id": "a2cac23e-34cf-4764-8be2-f84c54a7a991",
+      "name": "Build final dataset"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2216,
+        224
+      ],
+      "id": "64a6c5d0-b345-4f4e-a1de-edb7dbe73064",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "d9Xnbeh0eP2qTFxB",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "load",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "seo-geo-guidelines",
+          "mode": "list",
+          "cachedResultName": "seo-geo-guidelines"
+        },
+        "prompt": "How can an online retailer improve its visibility in Google search results and in AI assistant answers (generative engine optimization)?",
+        "topK": 6,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        2144,
+        0
+      ],
+      "id": "06ac7160-e591-4a63-9a22-6b6af3b66e07",
+      "name": "RAG - SEO GEO guidelines",
+      "credentials": {
+        "pineconeApi": {
+          "id": "JLc8uMIwa27JRZSQ",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $('Build final dataset').first().json;\n\nconst guidelines = $input.all().map(i => ({\n  source: i.json.document.metadata['pdf.info.Title'] || 'Unknown source',\n  text: i.json.document.pageContent,\n}));\n\n// Calculate comparisons in code, so the AI can't get them wrong\nconst num = v => (typeof v === 'number' ? v : 99);\nconst aiRank = s => { const m = /#(\\d+)/.exec(s || ''); return m ? +m[1] : 99; };\nconst b = data.brand;\nconst key_facts = [];\n\nfor (const r of data.results) {\n  const q = r.query;\n\n  // Google\n  const gB = num(r.google_positions[b]);\n  const gWinners = data.competitors.filter(c => num(r.google_positions[c]) < gB);\n  if (gB === 99 && gWinners.length === 0) {\n    key_facts.push(`Google, \"${q}\": no tracked brand is in the top 10.`);\n  } else if (gWinners.length) {\n    key_facts.push(`Google, \"${q}\": ${gWinners.map(c => `${c} (#${r.google_positions[c]})`).join(', ')} rank above ${b} (${r.google_positions[b]}).`);\n  } else {\n    key_facts.push(`Google, \"${q}\": ${b} (#${gB}) ranks above all competitors.`);\n  }\n\n  // AI answers\n  const aB = aiRank(r.ai_mentions[b]);\n  const aWinners = data.competitors.filter(c => aiRank(r.ai_mentions[c]) < aB);\n  if (aB === 99 && aWinners.length === 0) {\n    key_facts.push(`AI answer, \"${q}\": no tracked brand is mentioned.`);\n  } else if (aWinners.length) {\n    key_facts.push(`AI answer, \"${q}\": ${aWinners.join(', ')} mentioned before ${b}.`);\n  } else {\n    key_facts.push(`AI answer, \"${q}\": ${b} is mentioned first among tracked brands.`);\n  }\n}\n\nreturn [{ json: { ...data, key_facts, guidelines } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2496,
+        0
+      ],
+      "id": "42285143-2156-4f2b-9f0f-bfb414e76c15",
+      "name": "Add guidelines"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are a senior SEO & GEO analyst. Write a clear, structured competitive visibility report in Markdown for an SEO/GEO manager.\n\nRules:\n- Use ONLY the data provided. Never invent rankings, mentions or news.\n- Compare the main brand against each competitor.\n- Base every recommendation on the provided guidelines and name the guideline source in brackets.\n- Recommendations must be concrete actions the team can start this week.\n- If data is missing or an error is listed, say so in section 7.\n- Keep it concise: max 1 page.\n- Do not include the hints in brackets in the headings.\n- In section 7, list the data sources: Serper (Google results), OpenAI (AI answer check), NewsAPI (news), Pinecone (SEO/GEO guidelines).\n- Each recommendation must name one specific query or competitor it addresses.\n- The summary must be 3–4 sentences.\n- Double-check every comparison against the tables. Never claim a competitor beats the brand unless the data clearly shows it.\n- Use key_facts as the ONLY source for comparisons between brands. Do not compare positions yourself.\n\nUse exactly this structure:\n# AI Search Visibility Report: {brand} vs Competitors\nDate | Market | Queries checked\n## 1. Summary\n## 2. Google Visibility (table: query × brand positions)\n## 3. AI Answer Visibility (table: query × brand mentions, plus 1–2 sentences)\n## 4. News & Brand Signals (max 2 bullets per brand)\n## 5. Gaps & Opportunities (where competitors win and the brand doesn't)\n## 6. Recommendations (3–5 actions, each with its guideline source)\n## 7. Sources & Data Notes (APIs used, date, missing data)"
+            },
+            {
+              "role": "=user",
+              "content": "=Here is the research data:\n{{ JSON.stringify($json, null, 2) }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        2720,
+        0
+      ],
+      "id": "9961c3f5-d31b-4020-bd05-93a60e3569c7",
+      "name": "OpenAI - write report",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "openAiApi": {
+          "id": "d9Xnbeh0eP2qTFxB",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $input.first().json.output?.[0]?.content?.[0]?.text || 'Report could not be generated.';\nconst data = $('Build final dataset').first().json;\n\nreturn [{\n  json: {\n    report: text,\n    fileName: `${data.brand.toLowerCase().replace(/\\s+/g, '_')}_report_${data.date}.md`,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3072,
+        0
+      ],
+      "id": "544907fa-c2fc-4c0f-ba02-611790b4245a",
+      "name": "Extract report text"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "report",
+        "options": {
+          "fileName": "={{ $json.fileName }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        3296,
+        0
+      ],
+      "id": "33707445-55fa-4888-9145-6ce3a97d4ffb",
+      "name": "Create report file"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Clean & validate input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean & validate input": {
+      "main": [
+        [
+          {
+            "node": "Serper - Google results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Serper - Google results": {
+      "main": [
+        [
+          {
+            "node": "Extract Google positions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Google positions": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - AI answer check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - AI answer check": {
+      "main": [
+        [
+          {
+            "node": "Combine Google + AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Google + AI": {
+      "main": [
+        [
+          {
+            "node": "Brands for news",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brands for news": {
+      "main": [
+        [
+          {
+            "node": "NewsAPI - brand news",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NewsAPI - brand news": {
+      "main": [
+        [
+          {
+            "node": "Build final dataset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build final dataset": {
+      "main": [
+        [
+          {
+            "node": "RAG - SEO GEO guidelines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "RAG - SEO GEO guidelines",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RAG - SEO GEO guidelines": {
+      "main": [
+        [
+          {
+            "node": "Add guidelines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add guidelines": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - write report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - write report": {
+      "main": [
+        [
+          {
+            "node": "Extract report text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract report text": {
+      "main": [
+        [
+          {
+            "node": "Create report file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "8c422d0c-69c1-4492-8190-f5d99e4b8a14",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "49b42c0051ee1c04693c425c4d57eeb1072531f55d1515f0d9aeb5a5977f030a"
+  },
+  "id": "gP4Q3iEPnAIv3hmr",
+  "tags": []
+}

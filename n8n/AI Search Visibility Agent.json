@@ -22,6 +22,11 @@
               "fieldLabel": "queries",
               "fieldType": "textarea",
               "placeholder": "one query per line"
+            },
+            {
+              "fieldLabel": "email",
+              "fieldType": "email",
+              "requiredField": true
             }
           ]
         },
@@ -402,6 +407,37 @@
       ],
       "id": "0c1c1f95-2259-4380-b671-b704f9049738",
       "name": "Use checked report"
+    },
+    {
+      "parameters": {
+        "fromEmail": "mishrabarsha765@gmail.com",
+        "toEmail": "={{ $('On form submission').first().json.email }}",
+        "subject": "=AI Search Visibility Report: {{ $('Build final dataset').first().json.brand }}",
+        "emailFormat": "text",
+        "text": "=Hi,\n\nyour AI Search Visibility Report is attached.\n\nFact-check status: {{ $('Use checked report').first().json.fact_check_status }}\n\nBest regards,\nAI Search Visibility Agent",
+        "options": {
+          "attachments": "data"
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        3920,
+        0
+      ],
+      "id": "347eac87-b16e-41f2-bbe7-f416addcd905",
+      "name": "Send report by email",
+      "webhookId": "96875cc2-aedf-450b-8b09-bfebb2ab8cb9",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "smtp": {
+          "id": "6OpagPQWTiRu1CLX",
+          "name": "SMTP account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -581,6 +617,17 @@
           }
         ]
       ]
+    },
+    "Create report file": {
+      "main": [
+        [
+          {
+            "node": "Send report by email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -588,7 +635,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "3a361872-b775-44ad-b1a2-a639618b6101",
+  "versionId": "392bd188-21c9-4a09-beee-8fca1931a074",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "49b42c0051ee1c04693c425c4d57eeb1072531f55d1515f0d9aeb5a5977f030a"

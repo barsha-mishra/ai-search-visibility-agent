@@ -242,7 +242,7 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
       "typeVersion": 1.2,
       "position": [
-        2216,
+        2224,
         224
       ],
       "id": "64a6c5d0-b345-4f4e-a1de-edb7dbe73064",
@@ -360,11 +360,48 @@
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        3296,
+        3712,
         0
       ],
       "id": "33707445-55fa-4888-9145-6ce3a97d4ffb",
       "name": "Create report file"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ai-search-visibility-agent.onrender.com/fact-check",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ data: $('Add guidelines').first().json, report: $json.report }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3264,
+        0
+      ],
+      "id": "0e494644-613b-4c51-ba88-6dea4fb467e4",
+      "name": "LangGraph - fact-check",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const original = $('Extract report text').first().json;\nconst check = $input.first().json;\n\nlet report, note;\nif (check.error || !check.report) {\n  // Fact-checker unavailable: keep the original report\n  report = original.report;\n  note = 'Fact-check: not available (service did not respond), original report used.';\n} else {\n  report = check.report;\n  note = `Fact-check (LangGraph): ${check.status} after ${check.fixes} fix(es).`;\n}\n\nreturn [{\n  json: {\n    report: `${report}\\n\\n---\\n*${note}*`,\n    fileName: original.fileName,\n    fact_check_status: check.status || 'unavailable',\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3488,
+        0
+      ],
+      "id": "0c1c1f95-2259-4380-b671-b704f9049738",
+      "name": "Use checked report"
     }
   ],
   "pinData": {},
@@ -516,6 +553,28 @@
       "main": [
         [
           {
+            "node": "LangGraph - fact-check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LangGraph - fact-check": {
+      "main": [
+        [
+          {
+            "node": "Use checked report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Use checked report": {
+      "main": [
+        [
+          {
             "node": "Create report file",
             "type": "main",
             "index": 0
@@ -529,7 +588,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "8c422d0c-69c1-4492-8190-f5d99e4b8a14",
+  "versionId": "3a361872-b775-44ad-b1a2-a639618b6101",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "49b42c0051ee1c04693c425c4d57eeb1072531f55d1515f0d9aeb5a5977f030a"

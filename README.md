@@ -36,6 +36,8 @@ You can ask ChatGPT "Is Zalando visible online?", but you'd get a one-off opinio
 
 ## Architecture
 
+![n8n workflow](docs/workflow.png)
+
 ```mermaid
 flowchart TD
     A[n8n Form: brand, competitors, country, queries, email] --> B[Wake up fact-checker]
@@ -47,7 +49,7 @@ flowchart TD
     G --> H[NewsAPI: brand news + relevance filter]
     H --> I[Build final dataset]
     I --> J[Pinecone RAG: SEO/GEO guidelines]
-    J --> K[Key facts calculated in code]
+    J --> K[Key facts + visibility scores calculated in code]
     K --> L[OpenAI: write report]
     L --> M[LangGraph fact-checker on Render]
     M --> N[Report file .md]

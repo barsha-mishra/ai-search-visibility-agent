@@ -22,6 +22,7 @@ You can ask ChatGPT "Is Zalando visible online?", but you'd get a one-off opinio
 - **Grounded recommendations:** based on official Google and GEO guidelines (RAG with Pinecone), with sources.
 - **Repeatable:** same queries, competitors and format every time, so visibility can be tracked over time.
 - **Automated:** one form submission → multiple queries × brands × sources → finished report in your inbox in ~2–3 minutes.
+- **Visibility score:** a simple score per brand (Google %, AI %, overall) shows the winner in 5 seconds.
 
 ---
 
@@ -29,8 +30,8 @@ You can ask ChatGPT "Is Zalando visible online?", but you'd get a one-off opinio
 
 | Report | Key insight |
 |---|---|
-| [Zalando vs ABOUT YOU, ASOS, Shein, H&M](reports/zalando_report_2026-11-11.md) | Zalando is first among tracked brands in all AI answers, but ABOUT YOU wins Google on 3 of 4 queries. |
-| [Adidas vs Nike, Puma, New Balance](reports/adidas_report_2026-11-11.md) | No brand reaches Google's top 10 for generic queries (review sites dominate), but Adidas leads AI answers. |
+| [Zalando vs ABOUT YOU, ASOS, Shein, H&M](reports/zalando_report_2026-11-11.md) | Zalando scores 100% overall vs ABOUT YOU 63%. ASOS has 0% Google but 100% AI visibility. |
+| [Adidas vs Nike, Puma, New Balance](reports/adidas_report_2026-11-11.md) | No brand reaches Google's top 10 for generic queries (review sites dominate), but Adidas leads AI answers (100% AI visibility, first among tracked brands in all 4). |
 
 ---
 

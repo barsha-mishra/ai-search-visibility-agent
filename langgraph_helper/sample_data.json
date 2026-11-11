@@ -1,0 +1,228 @@
+{
+  "brand": "Zalando",
+  "competitors": [
+    "ABOUT YOU",
+    "ASOS",
+    "Shein",
+    "H&M"
+  ],
+  "country": "Germany",
+  "date": "2026-11-11",
+  "results": [
+    {
+      "query": "best online fashion store Germany",
+      "google_positions": {
+        "Zalando": 3,
+        "ABOUT YOU": 1,
+        "ASOS": "not in top 10",
+        "Shein": "not in top 10",
+        "H&M": "not in top 10"
+      },
+      "google_top3": [
+        "About You: Fashion online from more than 3000 top brands",
+        "(Online) shops for buying clothes : r/germany",
+        "Buy Clothing online | Trendy fashion for everyone"
+      ],
+      "ai_mentions": {
+        "Zalando": "mentioned (#1)",
+        "ABOUT YOU": "mentioned (#2)",
+        "ASOS": "mentioned (#3)",
+        "Shein": "not mentioned",
+        "H&M": "not mentioned"
+      },
+      "ai_answer": "Some of the best online fashion stores in Germany include **Zalando**, **About You**, **Asos**, and **Modivo**. For luxury options, check out **Farfetch** and **Mytheresa**.",
+      "errors": []
+    },
+    {
+      "query": "where to buy clothes online with free returns",
+      "google_positions": {
+        "Zalando": 9,
+        "ABOUT YOU": 2,
+        "ASOS": "not in top 10",
+        "Shein": "not in top 10",
+        "H&M": "not in top 10"
+      },
+      "google_top3": [
+        "Amazon alternative w/ free shipping and returns?",
+        "About You: Fashion online from more than 3000 top brands",
+        "Every Online Retailer With Free Shipping & Free Returns ..."
+      ],
+      "ai_mentions": {
+        "Zalando": "mentioned (#1)",
+        "ABOUT YOU": "mentioned (#4)",
+        "ASOS": "mentioned (#2)",
+        "Shein": "not mentioned",
+        "H&M": "mentioned (#3)"
+      },
+      "ai_answer": "Here are some options in Germany for online shopping with free returns:\n\n1. **Zalando** - Wide range of brands and styles.\n2. **ASOS** - Trendy clothing and accessories.\n3. **Uniqlo** - Casual wear with a modern touch.\n4. **H&M** - Affordable fashion for all.\n5. **About You** - Popular brands and personalized shopping.\n\nAlways check the return policies for specifics!",
+      "errors": []
+    },
+    {
+      "query": "best online shop for sneakers Germany",
+      "google_positions": {
+        "Zalando": 5,
+        "ABOUT YOU": "not in top 10",
+        "ASOS": "not in top 10",
+        "Shein": "not in top 10",
+        "H&M": "not in top 10"
+      },
+      "google_top3": [
+        "Sneaker Online Shop | AFEW STORE",
+        "Sneaker, Kleidung und Accessoires | Foot Locker Germany",
+        "Sneaker - 43einhalb Sneaker Store Fulda"
+      ],
+      "ai_mentions": {
+        "Zalando": "mentioned (#1)",
+        "ABOUT YOU": "not mentioned",
+        "ASOS": "mentioned (#2)",
+        "Shein": "not mentioned",
+        "H&M": "not mentioned"
+      },
+      "ai_answer": "Some of the best online shops for sneakers in Germany include:\n\n1. **Zalando**\n2. **Foot Locker**\n3. **Snipes**\n4. **ASOS**\n5. **Nike.com**\n6. **Adidas.de**\n7. **Streetwear Store**\n\nThese shops offer a wide variety of brands and styles.",
+      "errors": []
+    },
+    {
+      "query": "affordable fashion online shop Germany",
+      "google_positions": {
+        "Zalando": 3,
+        "ABOUT YOU": 2,
+        "ASOS": "not in top 10",
+        "Shein": "not in top 10",
+        "H&M": "not in top 10"
+      },
+      "google_top3": [
+        "(Online) shops for buying clothes : r/germany",
+        "About You: Fashion online from more than 3000 top brands",
+        "Buy Clothing online | Trendy fashion for everyone"
+      ],
+      "ai_mentions": {
+        "Zalando": "mentioned (#1)",
+        "ABOUT YOU": "mentioned (#4)",
+        "ASOS": "mentioned (#2)",
+        "Shein": "not mentioned",
+        "H&M": "mentioned (#3)"
+      },
+      "ai_answer": "Here are some affordable fashion online shops in Germany:\n\n1. **Zalando** \n2. **ASOS**\n3. **H&M**\n4. **C&A**\n5. **Pull&Bear**\n6. **Mango Outlet**\n7. **About You** \n\nThese shops offer a wide range of stylish and budget-friendly options.",
+      "errors": []
+    }
+  ],
+  "news": {
+    "Zalando": [
+      {
+        "title": "C&A, Zalando Commit to Agricultural Waste Fiber",
+        "source": "WWD",
+        "date": "2026-11-03",
+        "url": "http://wwd.com/sourcing-journal/industry-news/ca-zalando-altmat-altag-fiber-club-agricultural-waste-1239398298/"
+      },
+      {
+        "title": "Zalando launches AI shopping agent as margins squeezed",
+        "source": "RTE",
+        "date": "2026-11-03",
+        "url": "https://www.rte.ie/news/business/2026/1103/1597792-zalando-launches-ai-shopping-agent-as-margins-squeezed/"
+      },
+      {
+        "title": "Zalando increases quarterly revenue by 5 percent",
+        "source": "Fashionunited.com",
+        "date": "2026-11-03",
+        "url": "https://fashionunited.com/news/business/zalando-increases-quarterly-revenue-by-5-percent/2026110375524"
+      }
+    ],
+    "ABOUT YOU": "No relevant news found",
+    "ASOS": [
+      {
+        "title": "ASOS forecasts annual profit above market expectations",
+        "source": "RTE",
+        "date": "2026-11-05",
+        "url": "https://www.rte.ie/news/business/2026/1105/1598057-asos-quarterly-results/"
+      },
+      {
+        "title": "Hobbs and Whistles owner investigates hack that may have exposed customer data",
+        "source": "Biztoc.com",
+        "date": "2026-10-13",
+        "url": "https://biztoc.com/x/6522c21921537d12"
+      },
+      {
+        "title": "Nearly Every Fashion Brand Has an App Now. The Asos Hack Shows Why That Might Be A Bad Idea",
+        "source": "WWD",
+        "date": "2026-10-12",
+        "url": "http://wwd.com/sourcing-journal/industry-news/fashion-asos-hm-retail-app-hack-data-breach-1239344302/"
+      }
+    ],
+    "Shein": [
+      {
+        "title": "Shein to invest €500 million in Polish hub after EU parcel charges",
+        "source": "CNA",
+        "date": "2026-11-04",
+        "url": "https://www.channelnewsasia.com/business/shein-invest-eu500-million-in-polish-hub-after-eu-parcel-charges-6524826"
+      },
+      {
+        "title": "Australia Urged to Follow France and Introduce Fast-Fashion Tax for Temu and Shein",
+        "source": "Ibtimes.com.au",
+        "date": "2026-11-03",
+        "url": "https://www.ibtimes.com.au/australia-french-style-levy-ultra-fast-fashion-1877687"
+      },
+      {
+        "title": "Fast-fashion group Shein agrees to pay $100 million to settle US FTC probe: What is the case? What really happened?",
+        "source": "Livemint",
+        "date": "2026-10-24",
+        "url": "https://www.livemint.com/companies/fastfashion-group-shein-agrees-to-pay-100-million-to-settle-us-ftc-probe-what-is-the-case-what-really-happened-11792860504647.html"
+      }
+    ],
+    "H&M": [
+      {
+        "title": "The Fashion Collabs Our Editors Are Shopping Right Now, Including Elie Saab x H&M",
+        "source": "POPSUGAR",
+        "date": "2026-11-02",
+        "url": "https://www.popsugar.com/fashion/fashion-collaborations-49485440"
+      },
+      {
+        "title": "Beyoncé, Zendaya and Halle Berry’s Go-To Red Carpet Designer Launches Affordable H&M Collection",
+        "source": "Variety",
+        "date": "2026-10-30",
+        "url": "https://variety.com/2026/shopping/news/elie-saab-h-and-m-collection-shop-online-1236935358/"
+      },
+      {
+        "title": "H&M overcomes online sales dip to report 13% rise in pretax profit",
+        "source": "The Irish Times",
+        "date": "2026-10-27",
+        "url": "https://www.irishtimes.com/business/2026/10/27/hm-overcomes-online-sales-dip-to-report-13-rise-in-pretax-profit/"
+      }
+    ]
+  },
+  "key_facts": [
+    "Google, \"best online fashion store Germany\": ABOUT YOU (#1) rank above Zalando (3).",
+    "AI answer, \"best online fashion store Germany\": Zalando is mentioned first among tracked brands.",
+    "Google, \"where to buy clothes online with free returns\": ABOUT YOU (#2) rank above Zalando (9).",
+    "AI answer, \"where to buy clothes online with free returns\": Zalando is mentioned first among tracked brands.",
+    "Google, \"best online shop for sneakers Germany\": Zalando (#5) ranks above all competitors.",
+    "AI answer, \"best online shop for sneakers Germany\": Zalando is mentioned first among tracked brands.",
+    "Google, \"affordable fashion online shop Germany\": ABOUT YOU (#2) rank above Zalando (3).",
+    "AI answer, \"affordable fashion online shop Germany\": Zalando is mentioned first among tracked brands."
+  ],
+  "guidelines": [
+    {
+      "source": "AI Features and Your Website | Google Search Central  |  Documentation  |  Google for Developers",
+      "text": "AI features and your website\nThis guide covers how AI features like AI Overviews and AI Mode work in Google Search\nfrom a site owner's perspective and how to approach your content's inclusion in these\nexperiences.\nThe best practices for SEO remain relevant for AI features in Google Search (such as AI Overviews and AI\nMode). There are no additional requirements to appear in AI Overviews or AI Mode, nor other special\noptimizations necessary. That said, it's always good to review the fundamental SEO best practices\n (/search/docs/essentials).\nHow AI features work in Search\nAs with Search overall, the AI features AI Overviews\n (https://support.google.com/websearch/answer/14901683) and AI Mode\n (https://support.google.com/websearch/answer/16011537) surface relevant links to help people\nfind the information they're looking for quickly and reliably, as well as to help them explore\ncontent they may not have discovered before. These features offer unique opportunities for"
+    },
+    {
+      "source": "AI Features and Your Website | Google Search Central  |  Documentation  |  Google for Developers",
+      "text": "set of helpful links associated with the\nresponse than with a classic web search,\nenabling new opportunities for exploration.\nAI Mode and AI Overviews may use different models and techniques, so the set of\nresponses and links they show will vary. AI Overviews are only shown when our systems\ndetermine that it is additive to classic Search, and as such, often don't trigger.\nHow to appear in AI features\nYou can apply the same foundational SEO best practices (/search/docs/essentials) for AI\nfeatures as you do for Google Search overall: making sure the page meets the technical\nrequirements for Google Search (/search/docs/essentials/technical), following Search policies\n (https://support.google.com/websearch/answer/10622781), and focusing on the key best\npractices (/search/docs/essentials#key-best-practices), such as creating helpful, reliable, people-\nfirst content (/search/docs/fundamentals/creating-helpful-content).\nTechnical requirements for appearing in AI features"
+    },
+    {
+      "source": "GEO: Generative Engine Optimization",
+      "text": "engines. While their approach focuses on increasing product visibil-\nity through adversarial text, our method introduces non-adversarial\nstrategies to optimize any website content for improved visibility\nin generative engine search results.\nRetrieval-Augmented Language Models:Several  recent  works\nhave tackled the issues of limited memory of language models\nby fetching relevant sources from a knowledge base to complete a\ntask [3,9,18]. However, Generative Engine needs to generate an\nanswer and provide attributions throughout the answer. Further,\nGenerative Engine is not limited to a single text modality regarding\nboth input and output. Additionally, the framework of Generative\nEngine is not limited to fetching relevant sources but instead com-\nprises multiple tasks such as query reformulation, source selection,\nand making decisions on how and when to perform them.\nSearch Engine Optimization:In nearly the past 25 years, extensive"
+    },
+    {
+      "source": "GEO: Generative Engine Optimization",
+      "text": "generative engines (GEs), can generate accurate and personalized\nresponses, rapidly replacing traditional search engines like Google\nand Bing. Generative Engines typically satisfy queries by synthe-\nsizing information from multiple sources and summarizing them\nusing LLMs. While this shift significantly improvesuserutility\nandgenerative search enginetraffic, it poses a huge challenge for\nthe third stakeholder – website and content creators. Given the\nblack-box and fast-moving nature of generative engines, content\ncreators have little to no control overwhenandhowtheir content\nis displayed. With generative engines here to stay, we must ensure\nthe creator economy is not disadvantaged. To address this, we in-\ntroduceGenerative Engine Optimization(GEO), the first novel\nparadigm to aid content creators in improving their content visi-\nbility in generative engine responses through a flexible black-box\noptimization framework for optimizing and defining visibility met-"
+    },
+    {
+      "source": "GEO: Generative Engine Optimization",
+      "text": "Models to Increase Product Visibility.  arXiv:2404.07981 [cs.IR]\n[12]R.Anil Kumar, Zaiduddin Shaik, and Mohammed Furqan. 2019.  A Survey on\nSearch Engine Optimization Techniques.International Journal of P2P Network\nTrends and Technology(2019).  https://doi.org/10.14445/22492615/IJPTT-V9I1P402\n[13]Tom  Kwiatkowski,  Jennimaria  Palomaki,  Olivia  Redfield,  Michael  Collins,\nAnkur P. Parikh, Chris Alberti, Danielle Epstein, Illia Polosukhin, Jacob De-\nvlin, Kenton Lee, Kristina Toutanova, Llion Jones, Matthew Kelcey, Ming-Wei\nChang, Andrew M. Dai, Jakob Uszkoreit, Quoc V. Le, and Slav Petrov. 2019.\nNatural Questions: A Benchmark for Question Answering Research.Transac-\ntions of the Association for Computational Linguistics7 (2019), 453–466.   https:\n//api.semanticscholar.org/CorpusID:86611921\n[14]\nNelson  F.  Liu,  Tianyi  Zhang,  and  Percy  Liang.  2023.   Evaluating  Verifiabil-\nity in Generative Search Engines.ArXivabs/2304.09848 (2023).    https://api."
+    },
+    {
+      "source": "GEO: Generative Engine Optimization",
+      "text": "Through systematic evaluation, we demonstrate that our proposed\nGenerative Engine Optimizationmethods can boost visibility by\nup to 40% on diverse queries, providing beneficial strategies for con-\ntent creators. Among other things, we find that including citations,\nquotations from relevant sources, and statistics can significantly\nboost source visibility, with an increase of over 40% across various\nqueries. We also demonstrate the efficacy ofGenerative Engine\nOptimizationon Perplexity.ai, a real-world generative engine and\ndemonstrate visibility improvements up to 37%.\nIn summary, our contributions are three-fold:\n(1) We proposeGenerative Engine Optimization, the first gen-\neral optimization framework for website owners to optimize their\nwebsites for generative engines.Generative Engine Optimiza-\ntioncan improve the visibility of websites by up to 40% on a wide\nrange of queries, domains, and real-world black-box generative\nengines."
+    }
+  ]
+}

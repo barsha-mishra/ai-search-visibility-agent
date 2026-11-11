@@ -1,4 +1,4 @@
-1. n8n Form Trigger → brand, 2 competitors, 3–5 queries, country
+1. n8n Form Trigger → brand, 4 competitors, 3–5 queries, country
         ↓
 2. Validate input (all fields filled?)
         ↓

@@ -13,7 +13,7 @@ Date: {date} | Market: {country} | Queries checked: {number}
 3–4 sentences: who is most visible overall and the biggest gap for {Brand}.
 
 ## 2. Google Visibility (Serper)
-| Query | {Brand} position | Competitor 1 | Competitor 2 |
+| Query | {Brand} position | Competitor 1 | Competitor 2 | Competitor 3 | Competitor 4
 
 ## 3. AI Answer Visibility (OpenAI)
 | Query | {Brand} mentioned? | Competitors mentioned |

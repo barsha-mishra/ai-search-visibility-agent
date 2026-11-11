@@ -33,6 +33,10 @@ You can ask ChatGPT "Is Zalando visible online?", but you'd get a one-off opinio
 | [Zalando vs ABOUT YOU, ASOS, Shein, H&M](reports/zalando_report_2026-11-11.md) | Zalando scores 100% overall vs ABOUT YOU 63%. ASOS has 0% Google but 100% AI visibility. |
 | [Adidas vs Nike, Puma, New Balance](reports/adidas_report_2026-11-11.md) | No brand reaches Google's top 10 for generic queries (review sites dominate), but Adidas leads AI answers (100% AI visibility, first among tracked brands in all 4). |
 
+**The report as it arrives by email:**
+
+![Email report](docs/email_report.png)
+
 ---
 
 ## Architecture

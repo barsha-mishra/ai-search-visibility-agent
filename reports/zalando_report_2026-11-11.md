@@ -1,50 +1,51 @@
 # AI Search Visibility Report: Zalando vs Competitors
-2026-11-11 | Germany | 4 queries
+2026-11-11 | Germany | 4 queries checked
 
 ## 1. Summary
-Zalando is strongest in AI answers for the query “where to buy clothes online with free returns,” where it is mentioned first among tracked brands. In Google results, ABOUT YOU leads Zalando on three of four queries, while Zalando leads only on the sneakers query. ASOS, Shein, and H&M do not appear in the Google top 10 for any checked query, but ASOS and H&M do surface in several AI answers. Overall, Zalando has a clear AI visibility advantage, but it underperforms ABOUT YOU in core shopping-intent SERPs.
+Zalando is strong in AI answer visibility across all four tracked queries, where it is mentioned first among tracked brands for the queries checked. In Google results, ABOUT YOU leads Zalando on three of the four queries, while Zalando leads the sneaker query. This creates a mixed picture: Zalando is more consistently surfaced by AI than in classic search, but it still trails ABOUT YOU on several high-intent commercial queries. News coverage is active for Zalando, with recent items on AI shopping, revenue, and sustainability.
 
 ## 2. Google Visibility
+
 | Query | Zalando | ABOUT YOU | ASOS | Shein | H&M |
 |---|---:|---:|---:|---:|---:|
 | best online fashion store Germany | 3 | 1 | not in top 10 | not in top 10 | not in top 10 |
-| where to buy clothes online with free returns | 9 | 2 | not in top 10 | not in top 10 | not in top 10 |
+| where to buy clothes online with free returns | 8 | 2 | not in top 10 | not in top 10 | not in top 10 |
 | best online shop for sneakers Germany | 5 | not in top 10 | not in top 10 | not in top 10 | not in top 10 |
 | affordable fashion online shop Germany | 4 | 2 | not in top 10 | not in top 10 | not in top 10 |
 
 ## 3. AI Answer Visibility
-| Query | Zalando | ABOUT YOU | ASOS | Shein | H&M |
-|---|---|---:|---:|---:|---:|
-| best online fashion store Germany | mentioned (#1) | mentioned (#2) | mentioned (#3) | not mentioned | not mentioned |
-| where to buy clothes online with free returns | mentioned (#1) | not mentioned | mentioned (#2) | not mentioned | mentioned (#3) |
-| best online shop for sneakers Germany | mentioned (#1) | not mentioned | mentioned (#2) | not mentioned | not mentioned |
-| affordable fashion online shop Germany | mentioned (#1) | mentioned (#4) | mentioned (#3) | not mentioned | mentioned (#2) |
 
-Zalando is consistently the first tracked brand in AI answers for “best online fashion store Germany,” which suggests strong generative visibility even where Google rankings lag. ASOS and H&M appear in AI answers on some purchase-intent queries, while ABOUT YOU is more consistently ahead of Zalando in Google results.
+| Query | Zalando | ABOUT YOU | ASOS | Shein | H&M |
+|---|---|---|---|---|---|
+| best online fashion store Germany | mentioned (#1) | mentioned (#2) | mentioned (#3) | not mentioned | not mentioned |
+| where to buy clothes online with free returns | mentioned (#1) | mentioned (#2) | mentioned (#3) | not mentioned | mentioned (#4) |
+| best online shop for sneakers Germany | mentioned (#1) | not mentioned | not mentioned | not mentioned | not mentioned |
+| affordable fashion online shop Germany | mentioned (#1) | mentioned (#4) | mentioned (#2) | not mentioned | mentioned (#3) |
+
+Zalando is first among tracked brands in the AI answers checked. ABOUT YOU and ASOS also appear frequently in AI answers for broad fashion and value queries, so Zalando’s AI visibility is strong but not exclusive.
 
 ## 4. News & Brand Signals
-- **Zalando:** AI shopping agent launch; revenue up 5%; sustainability/fiber partnership.  
-- **ABOUT YOU:** No relevant news found.  
-- **ASOS:** Profit outlook above expectations; hack/security coverage.  
-- **Shein:** EU hub investment; fast-fashion tax/regulatory coverage; FTC settlement coverage.  
-- **H&M:** Collaborations/collection launch coverage; online sales and profit coverage.  
+- **Zalando:** recent coverage on AI shopping agent launch, quarterly revenue growth, and a sustainability collaboration with C&A.
+- **ABOUT YOU:** no relevant news found in the provided data.
+- **ASOS:** recent positive earnings coverage, plus separate hack/data-breach related coverage.
+- **Shein:** recent coverage centers on investment, regulation/tax pressure, and an FTC settlement.
+- **H&M:** recent coverage includes fashion collaborations, a new affordable collection, and profit growth.
 
 ## 5. Gaps & Opportunities
-- ABOUT YOU beats Zalando in Google for **best online fashion store Germany**, **where to buy clothes online with free returns**, and **affordable fashion online shop Germany**.
-- Zalando trails ABOUT YOU most clearly on **where to buy clothes online with free returns** (9 vs 2).
-- ASOS and H&M do not rank in Google top 10, but both still appear in AI answers for some queries, so Zalando should protect its AI lead while improving organic relevance.
+- Competitor advantage: ABOUT YOU ranks above Zalando on **best online fashion store Germany**, **where to buy clothes online with free returns**, and **affordable fashion online shop Germany** in Google.
+- Zalando’s clear win: Zalando ranks above all competitors on **best online shop for sneakers Germany** in Google, and is first among tracked brands in AI answers across all queries.
 
 ## 6. Recommendations
-1. Refresh landing pages for **“where to buy clothes online with free returns”** to emphasize returns policy, shipping details, and trust signals in concise, people-first copy [Google Search Central: helpful, reliable, people-first content].  
-2. Create or update a dedicated sneakers hub for **“best online shop for sneakers Germany”** with clear category structure, brand selection, and internal links to improve classic SEO while preserving AI visibility [Google Search Central: foundational SEO best practices].  
-3. Expand affordable-fashion content for **“affordable fashion online shop Germany”** with price-range filters, sale pages, and comparison-friendly copy that clearly states value proposition versus **ABOUT YOU** [Google Search Central: helpful, reliable, people-first content].  
-4. Add factual, citation-ready statements and stats to key shopping pages for **“best online fashion store Germany”** so AI systems can more easily retrieve and attribute Zalando [GEO: including citations, quotations from relevant sources, and statistics can boost visibility].  
-5. Publish a concise FAQ page covering returns, affordability, and sneaker shopping, then interlink it to relevant category pages to strengthen both Google and AI discoverability against **ABOUT YOU** and **ASOS** [Google Search Central: technical requirements and key best practices].
+1. Strengthen landing page coverage for **“where to buy clothes online with free returns”** to close the gap with **ABOUT YOU** in Google [Google Search Central: foundational SEO best practices; helpful, reliable, people-first content].
+2. Expand category content for **“affordable fashion online shop Germany”** with clear value, pricing, and deal messaging to compete with **ABOUT YOU** and **ASOS** in AI and Google [Google Search Central: same foundational SEO best practices for AI features].
+3. Build a dedicated sneaker hub for **“best online shop for sneakers Germany”** and reinforce product/category specificity to protect Zalando’s lead [Google Search Central: technical requirements and key best practices].
+4. Add concise citations, statistics, and source-backed claims to key category pages, especially for **best online fashion store Germany**, to improve AI answer visibility and retrievability [GEO: including citations, quotations, and statistics can significantly boost source visibility].
+5. Use current news angles on **Zalando AI shopping agent** in supporting content and PR-adjacent pages to strengthen generative visibility around innovation [GEO: optimize content for generative engine responses through source visibility].
 
 ## 7. Sources & Data Notes
-**APIs used:** Serper (Google results), OpenAI (AI answer check), NewsAPI (news), Pinecone (SEO/GEO guidelines).  
-**Date:** 2026-11-11.  
-**Missing data / notes:** No errors were listed in the provided query results. News was unavailable for ABOUT YOU (“No relevant news found”). Comparisons above use only the provided `key_facts` for brand-to-brand judgments.
+**Sources:** Serper (Google results), OpenAI (AI answer check), NewsAPI (news), Pinecone (SEO/GEO guidelines).  
+**Date:** 2026-11-11  
+**Data notes:** 4 queries checked; no errors reported in the provided results. ABOUT YOU had no relevant news found. ASOS, Shein, and H&M had news coverage in the provided data.
 
 ---
-*Fact-check (LangGraph): passed after 2 fix(es).*
+*Fact-check (LangGraph): issues remaining after 2 fix(es).*

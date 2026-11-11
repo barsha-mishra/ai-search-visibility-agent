@@ -7,7 +7,7 @@ Zalando is strongest in AI answer visibility across all checked queries, where i
 ## 2. Google Visibility (table: query × brand positions)
 
 | Query | Zalando | ABOUT YOU | ASOS | Shein | H&M |
-|---|---:|---:|---|---|---|
+|---|---:|---:|---:|---:|---:|
 | best online fashion store Germany | 3 | 1 | not in top 10 | not in top 10 | not in top 10 |
 | where to buy clothes online with free returns | 9 | 2 | not in top 10 | not in top 10 | not in top 10 |
 | best online shop for sneakers Germany | 5 | not in top 10 | not in top 10 | not in top 10 | not in top 10 |
@@ -50,4 +50,4 @@ Date: **2026-11-11** | Market: **Germany** | Queries checked: **4**.
 Missing data / errors: no errors listed in the provided results; **ABOUT YOU has no relevant news found** in the dataset.
 
 ---
-*Fact-check: passed after 2 fix(es).*
+*Fact-check: passed after 1 fix(es).*

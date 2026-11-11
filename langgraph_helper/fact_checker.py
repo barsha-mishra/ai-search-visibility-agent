@@ -9,7 +9,7 @@ from langgraph.graph import StateGraph, END
 
 load_dotenv()
 
-# Stronger model for checking; change here if it gives an error (e.g. "gpt-4o-mini")
+# Model for checking; change here if it gives an error (e.g. "gpt-4o-mini")
 MODEL = "gpt-5.4-mini"
 llm = ChatOpenAI(model=MODEL, api_key=os.getenv("OPEN_API_KEY"))
 
@@ -18,10 +18,11 @@ MAX_FIXES = 2
 
 # ---------- State: what the graph remembers between steps ----------
 class State(TypedDict):
-    data: dict      # research data from n8n
-    report: str     # the report being checked
-    issues: list    # verified mistakes found
-    attempts: int   # how many times we fixed the report
+    data: dict          # research data from n8n
+    report: str         # the report being checked
+    candidates: list    # suspected mistakes (not yet verified)
+    issues: list        # verified mistakes
+    attempts: int       # how many times we fixed the report
 
 
 def parse_json(text: str) -> dict:
@@ -33,7 +34,19 @@ def parse_json(text: str) -> dict:
         return {"issues": []}
 
 
-# ---------- Node 1: check the report against the key facts ----------
+def build_evidence(data: dict) -> list:
+    """Full rankings and AI mentions per query, used as extra evidence."""
+    return [
+        {
+            "query": r.get("query"),
+            "google_positions": r.get("google_positions"),
+            "ai_mentions": r.get("ai_mentions"),
+        }
+        for r in data.get("results", [])
+    ]
+
+
+# ---------- Node 1: find suspected mistakes ----------
 def check_facts(state: State) -> dict:
     key_facts = state["data"].get("key_facts", [])
     prompt = f"""You are a strict fact-checker for an SEO/GEO report.
@@ -55,28 +68,58 @@ REPORT:
 {state["report"]}"""
     result = parse_json(llm.invoke(prompt).content)
 
-    # Keep only issues that point to a real key fact (filters out hallucinated issues)
-    issues = [
+    # Keep only suspected issues that point to a real key fact
+    candidates = [
         i for i in result.get("issues", [])
         if isinstance(i, dict) and i.get("fact") in key_facts
     ]
-    print(f"🔍 Check {state['attempts'] + 1}: {len(issues)} verified issue(s)")
-    for i in issues:
+    print(f"🔍 Check {state['attempts'] + 1}: {len(candidates)} suspected issue(s)")
+    return {"candidates": candidates}
+
+
+# ---------- Node 2: verify each suspected mistake (second opinion) ----------
+def verify_issues(state: State) -> dict:
+    evidence = build_evidence(state["data"])
+
+    verified = []
+    for issue in state["candidates"]:
+        prompt = f"""Google position 1 is the BEST; a lower number means a better ranking.
+"not in top 10" means the brand does not rank at all in the top 10.
+
+Using the FACT and the DATA below, is the CLAIM false?
+Answer YES if the claim contradicts the fact or the data.
+Answer NO if the claim is correct.
+Answer with only YES or NO.
+
+CLAIM: {issue.get("claim")}
+FACT: {issue.get("fact")}
+DATA: {json.dumps(evidence, indent=2)}"""
+        answer = llm.invoke(prompt).content.strip().upper()
+        if answer.startswith("YES"):
+            verified.append(issue)
+
+    print(f"✅ Verified: {len(verified)} real issue(s)")
+    for i in verified:
         print("   - Wrong:", i["claim"])
         print("     Fact: ", i["fact"])
-    return {"issues": issues}
+    return {"issues": verified}
 
 
-# ---------- Node 2: fix only the verified mistakes ----------
+# ---------- Node 3: fix only the verified mistakes ----------
 def fix_report(state: State) -> dict:
+    evidence = build_evidence(state["data"])
     prompt = f"""Fix ONLY these factual errors in the report. Each error shows the wrong claim
-and the correct fact. Keep the same structure, headings, tables and tone.
-Change nothing else. Return only the corrected Markdown report.
+and the correct fact. Use the DATA to write the correct version.
+Keep the same structure, headings, tables and tone. Change nothing else.
+Return only the corrected Markdown report.
 
 Remember: Google position 1 is the best; a lower number means a better ranking.
 
 ERRORS TO FIX:
 {json.dumps(state["issues"], indent=2)}
+
+DATA:
+{json.dumps(evidence, indent=2)}
 
 REPORT:
 {state["report"]}"""
@@ -92,18 +135,22 @@ def route(state: State) -> str:
     return "done"
 
 
-# ---------- Build the graph ----------
+# ---------- Build the graph: check → verify → (fix → check) or done ----------
 graph = StateGraph(State)
 graph.add_node("check_facts", check_facts)
+graph.add_node("verify_issues", verify_issues)
 graph.add_node("fix_report", fix_report)
 graph.set_entry_point("check_facts")
-graph.add_conditional_edges("check_facts", route, {"fix": "fix_report", "done": END})
+graph.add_edge("check_facts", "verify_issues")
+graph.add_conditional_edges("verify_issues", route, {"fix": "fix_report", "done": END})
 graph.add_edge("fix_report", "check_facts")
 app = graph.compile()
 
 
 def run_fact_check(data: dict, report: str) -> dict:
-    final = app.invoke({"data": data, "report": report, "issues": [], "attempts": 0})
+    final = app.invoke(
+        {"data": data, "report": report, "candidates": [], "issues": [], "attempts": 0}
+    )
     status = "passed" if not final["issues"] else "issues remaining"
     return {
         "report": final["report"],

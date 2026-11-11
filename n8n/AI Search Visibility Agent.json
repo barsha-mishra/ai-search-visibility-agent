@@ -36,7 +36,7 @@
       "typeVersion": 2.5,
       "position": [
         0,
-        0
+        -16
       ],
       "id": "7ab44ec5-4665-48ac-8b6b-5e1fa310f7e8",
       "name": "On form submission",
@@ -49,8 +49,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        432,
-        0
+        448,
+        -16
       ],
       "id": "f5bf8c55-518c-40c0-bed5-e1e02c841fc6",
       "name": "Clean & validate input"
@@ -62,8 +62,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        880,
-        0
+        896,
+        -16
       ],
       "id": "e52abb3d-3587-4a14-8b89-8a5f5921d198",
       "name": "Extract Google positions"
@@ -96,8 +96,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        656,
-        0
+        672,
+        -16
       ],
       "id": "e705722b-7d64-484d-a83b-f804477ab781",
       "name": "Serper - Google results",
@@ -134,8 +134,8 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.1,
       "position": [
-        1104,
-        0
+        1120,
+        -16
       ],
       "id": "c547626c-77eb-4a1d-b130-2bdae5dc1481",
       "name": "OpenAI - AI answer check",
@@ -157,8 +157,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1456,
-        0
+        1472,
+        -16
       ],
       "id": "480dfc3b-88f5-4928-873f-91bcce1c9647",
       "name": "Combine Google + AI"
@@ -170,8 +170,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1680,
-        0
+        1696,
+        -16
       ],
       "id": "fc8da041-30ee-490f-984c-aba0a841b244",
       "name": "Brands for news"
@@ -211,8 +211,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1904,
-        0
+        1920,
+        -16
       ],
       "id": "04500f67-a095-4b61-88bc-f9c657e884a1",
       "name": "NewsAPI - brand news",
@@ -234,8 +234,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2128,
-        0
+        2144,
+        -16
       ],
       "id": "a2cac23e-34cf-4764-8be2-f84c54a7a991",
       "name": "Build final dataset"
@@ -247,8 +247,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
       "typeVersion": 1.2,
       "position": [
-        2432,
-        224
+        2448,
+        208
       ],
       "id": "64a6c5d0-b345-4f4e-a1de-edb7dbe73064",
       "name": "Embeddings OpenAI",
@@ -275,8 +275,8 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
       "typeVersion": 1.3,
       "position": [
-        2352,
-        0
+        2368,
+        -16
       ],
       "id": "06ac7160-e591-4a63-9a22-6b6af3b66e07",
       "name": "RAG - SEO GEO guidelines",
@@ -294,8 +294,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2704,
-        0
+        2720,
+        -16
       ],
       "id": "42285143-2156-4f2b-9f0f-bfb414e76c15",
       "name": "Add guidelines"
@@ -326,7 +326,7 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.1,
       "position": [
-        2928,
+        2944,
         -16
       ],
       "id": "9961c3f5-d31b-4020-bd05-93a60e3569c7",
@@ -348,8 +348,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3280,
-        0
+        3296,
+        -16
       ],
       "id": "544907fa-c2fc-4c0f-ba02-611790b4245a",
       "name": "Extract report text"
@@ -365,8 +365,8 @@
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        3920,
-        0
+        4176,
+        -16
       ],
       "id": "33707445-55fa-4888-9145-6ce3a97d4ffb",
       "name": "Create report file"
@@ -385,8 +385,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        3472,
-        0
+        3520,
+        -16
       ],
       "id": "0e494644-613b-4c51-ba88-6dea4fb467e4",
       "name": "LangGraph - fact-check",
@@ -402,8 +402,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3696,
-        0
+        3744,
+        -16
       ],
       "id": "0c1c1f95-2259-4380-b671-b704f9049738",
       "name": "Use checked report"
@@ -413,8 +413,7 @@
         "fromEmail": "mishrabarsha765@gmail.com",
         "toEmail": "={{ $('On form submission').first().json.email }}",
         "subject": "=AI Search Visibility Report: {{ $('Build final dataset').first().json.brand }}",
-        "emailFormat": "text",
-        "text": "=Hi,\n\nyour AI Search Visibility Report is attached.\n\nFact-check status: {{ $('Use checked report').first().json.fact_check_status }}\n\nBest regards,\nAI Search Visibility Agent",
+        "html": "={{ $('Build HTML email').first().json.html }}",
         "options": {
           "attachments": "data"
         }
@@ -422,8 +421,8 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        4128,
-        0
+        4400,
+        -16
       ],
       "id": "347eac87-b16e-41f2-bbe7-f416addcd905",
       "name": "Send report by email",
@@ -449,12 +448,25 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        208,
-        0
+        224,
+        -16
       ],
       "id": "069780a7-5ec2-4b5a-bc1f-17bc4988ab84",
       "name": "Wake up fact-checker",
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;            // report, fileName, fact_check_status\nconst d = $('Add guidelines').first().json;   // research data + scores\nconst brands = [d.brand, ...d.competitors];\n\n// ---------- Helpers ----------\nconst esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst inline = s => esc(s)\n  .replace(/\\*\\*(.+?)\\*\\*/g, '<b>$1</b>')\n  .replace(/\\[(.+?)\\]/g, '<span style=\"color:#6b7280;font-size:12px;\">[$1]</span>');\n\n// Split the Markdown report into sections (\"## 1. Summary\" etc.)\nconst sections = {};\ninput.report.split(/\\n(?=## )/).forEach(block => {\n  const m = block.match(/^## \\d+\\.\\s*(.+)/);\n  if (m) sections[m[1].trim().toLowerCase()] = block.split('\\n').slice(1).join('\\n').trim();\n});\nconst getSec = name => Object.entries(sections).find(([k]) => k.startsWith(name))?.[1] || '';\n\n// Small Markdown -> HTML (paragraphs, bullets, numbered lists; tables are skipped)\nfunction mdToHtml(md) {\n  const lines = md.split('\\n').filter(l =>\n    !l.trim().startsWith('|') && !l.startsWith('---') && !l.startsWith('*Fact-check'));\n  let html = '', list = null;\n  const close = () => { if (list) { html += `</${list}>`; list = null; } };\n  for (const raw of lines) {\n    const l = raw.trim();\n    if (!l) { close(); continue; }\n    let m;\n    if ((m = l.match(/^[-*]\\s+(.*)/))) {\n      if (list !== 'ul') { close(); html += '<ul style=\"padding-left:20px;margin:8px 0;\">'; list = 'ul'; }\n      html += `<li style=\"margin:6px 0;\">${inline(m[1])}</li>`;\n    } else if ((m = l.match(/^\\d+\\.\\s+(.*)/))) {\n      if (list !== 'ol') { close(); html += '<ol style=\"padding-left:20px;margin:8px 0;\">'; list = 'ol'; }\n      html += `<li style=\"margin:6px 0;\">${inline(m[1])}</li>`;\n    } else {\n      close();\n      html += `<p style=\"margin:8px 0;\">${inline(l)}</p>`;\n    }\n  }\n  close();\n  return html;\n}\n\n// ---------- Building blocks ----------\nconst pct = s => parseInt(s) || 0;\nconst bar = (value, color) => `\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#eef0f4;border-radius:6px;\"><tr>\n    <td width=\"${Math.max(value, 1)}%\" style=\"background:${color};height:10px;border-radius:6px;font-size:0;line-height:0;\">&nbsp;</td>\n    <td style=\"font-size:0;line-height:0;\">&nbsp;</td>\n  </tr></table>`;\n\nconst th = t => `<th style=\"background:#f3f4f6;padding:8px;font-size:12px;text-align:left;color:#374151;\">${esc(t)}</th>`;\nconst td = (content, bg = '#ffffff', color = '#111827') =>\n  `<td style=\"padding:8px;font-size:13px;background:${bg};color:${color};border-bottom:1px solid #eef0f4;\">${content}</td>`;\nconst gCell = p => typeof p === 'number'\n  ? (p <= 3 ? td('#' + p, '#dcfce7', '#166534') : td('#' + p, '#fef9c3', '#854d0e'))\n  : td('—', '#fee2e2', '#991b1b');\nconst aCell = m => {\n  const r = /#(\\d+)/.exec(m || '');\n  if (!r) return td('—', '#fee2e2', '#991b1b');\n  return r[1] === '1' ? td('✔ #1', '#dcfce7', '#166534') : td('✔ #' + r[1], '#ecfdf5', '#065f46');\n};\nconst section = (title, body) => `\n  <tr><td style=\"padding:24px 32px;border-top:1px solid #eef0f4;\">\n    <h2 style=\"margin:0 0 12px;font-size:18px;color:#111827;\">${title}</h2>${body}\n  </td></tr>`;\n\n// ---------- Score cards ----------\nconst scoreRows = (d.visibility_scores || []).map(s => {\n  const main = s.brand === d.brand;\n  const cell = 'padding:10px 8px;border-bottom:1px solid #eef0f4;';\n  return `<tr>\n    <td style=\"${cell}font-weight:${main ? '700' : '400'};color:${main ? '#4f46e5' : '#111827'};white-space:nowrap;\">${esc(s.brand)}</td>\n    <td style=\"${cell}width:30%;\">${bar(pct(s.google_visibility), '#3b82f6')}\n      <div style=\"font-size:12px;color:#6b7280;margin-top:4px;\">${esc(s.google_visibility)} · avg pos ${esc(s.avg_google_position)}</div></td>\n    <td style=\"${cell}width:30%;\">${bar(pct(s.ai_visibility), '#10b981')}\n      <div style=\"font-size:12px;color:#6b7280;margin-top:4px;\">${esc(s.ai_visibility)} · first ${esc(s.first_among_tracked_in_ai)}</div></td>\n    <td style=\"${cell}text-align:center;font-size:20px;font-weight:700;color:#111827;\">${esc(s.overall_score)}</td>\n  </tr>`;\n}).join('');\nconst scoreTable = `\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\n    <tr>${th('Brand')}${th('Google')}${th('AI answers')}${th('Overall')}</tr>${scoreRows}\n  </table>\n  <p style=\"font-size:12px;color:#6b7280;margin-top:8px;\">Google = share of queries in the top 10. AI = share of AI answers mentioning the brand.</p>`;\n\n// ---------- Google & AI tables ----------\nconst headerRow = `<tr>${th('Query')}${brands.map(th).join('')}</tr>`;\nconst googleTable = `\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">${headerRow}\n    ${d.results.map(r => `<tr>${td(esc(r.query))}${brands.map(b => gCell(r.google_positions[b])).join('')}</tr>`).join('')}\n  </table>\n  <p style=\"font-size:12px;color:#6b7280;margin-top:8px;\">Green = top 3 · Yellow = #4–10 · Red = not in top 10</p>`;\nconst aiTable = `\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">${headerRow}\n    ${d.results.map(r => `<tr>${td(esc(r.query))}${brands.map(b => aCell(r.ai_mentions[b])).join('')}</tr>`).join('')}\n  </table>\n  <p style=\"font-size:12px;color:#6b7280;margin-top:8px;\">✔ #1 = first among tracked brands · — = not mentioned</p>`;\n\n// ---------- News ----------\nconst newsHtml = brands.map(b => {\n  const items = d.news?.[b];\n  const list = Array.isArray(items)\n    ? items.slice(0, 2).map(n => `<li style=\"margin:4px 0;\">\n        <a href=\"${esc(n.url)}\" style=\"color:#4f46e5;text-decoration:none;\">${esc(n.title)}</a>\n        <span style=\"color:#9ca3af;font-size:12px;\"> ${esc(n.source)}, ${esc(n.date)}</span></li>`).join('')\n    : `<li style=\"color:#9ca3af;\">${esc(items || 'No news')}</li>`;\n  return `<p style=\"margin:12px 0 4px;font-weight:700;\">${esc(b)}</p><ul style=\"padding-left:20px;margin:0;font-size:13px;\">${list}</ul>`;\n}).join('');\n\n// ---------- Fact-check badge ----------\nconst passed = input.fact_check_status === 'passed';\nconst badge = `<span style=\"background:${passed ? '#dcfce7' : '#ffedd5'};color:${passed ? '#166534' : '#9a3412'};padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700;\">Fact-check: ${esc(input.fact_check_status)}</span>`;\n\n// ---------- Full email ----------\nconst html = `\n<div style=\"background:#f3f4f6;padding:24px 0;font-family:Arial,Helvetica,sans-serif;\">\n<table width=\"100%\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:12px;max-width:640px;margin:0 auto;\">\n  <tr><td style=\"background:#4f46e5;padding:28px 32px;color:#ffffff;border-radius:12px 12px 0 0;\">\n    <div style=\"font-size:12px;letter-spacing:1px;text-transform:uppercase;\">AI Search Visibility Report</div>\n    <div style=\"font-size:24px;font-weight:700;margin-top:6px;\">${esc(d.brand)} vs Competitors</div>\n    <div style=\"font-size:13px;margin-top:8px;\">${esc(d.date)} · ${esc(d.country)} · ${d.results.length} queries checked</div>\n  </td></tr>\n  <tr><td style=\"padding:16px 32px 0;\">${badge}</td></tr>\n  ${section('Summary', mdToHtml(getSec('summary')))}\n  ${section('Visibility Score', scoreTable)}\n  ${section('Google Visibility', googleTable)}\n  ${section('AI Answer Visibility', aiTable)}\n  ${section('Gaps & Opportunities', mdToHtml(getSec('gaps')))}\n  ${section('Recommendations', mdToHtml(getSec('recommendations')))}\n  ${section('News & Brand Signals', newsHtml)}\n  <tr><td style=\"padding:20px 32px;background:#f9fafb;font-size:12px;color:#6b7280;border-radius:0 0 12px 12px;\">\n    Sources: Serper (Google results), OpenAI (AI answer check), NewsAPI (news), Pinecone (SEO/GEO guidelines).<br>\n    Full report attached as a Markdown file. Generated automatically by the AI Search Visibility Agent.\n  </td></tr>\n</table>\n</div>`;\n\nreturn [{ json: { ...input, html } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3952,
+        -16
+      ],
+      "id": "1115a3de-45bd-41d2-aeff-3832b8e2e46d",
+      "name": "Build HTML email"
     }
   ],
   "pinData": {},
@@ -628,7 +640,7 @@
       "main": [
         [
           {
-            "node": "Create report file",
+            "node": "Build HTML email",
             "type": "main",
             "index": 0
           }
@@ -656,6 +668,17 @@
           }
         ]
       ]
+    },
+    "Build HTML email": {
+      "main": [
+        [
+          {
+            "node": "Create report file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -663,7 +686,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "d1042e26-66d9-4aee-911b-bffe05d54802",
+  "versionId": "125e0dbc-4e35-495c-aba4-13e3860d68d2",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "49b42c0051ee1c04693c425c4d57eeb1072531f55d1515f0d9aeb5a5977f030a"

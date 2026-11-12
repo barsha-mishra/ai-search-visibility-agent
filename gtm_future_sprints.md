@@ -12,7 +12,7 @@ These sprints come **after** the MVP. They are not built yet.
 | | |
 |---|---|
 | **Goal** | Validate that SEO/GEO managers find the report useful and would use it regularly |
-| **Audience** | SEO/GEO managers at mid-size online brands (e-commerce, fashion, comparison sites) |
+| **Target user / buyer** | SEO/GEO managers at mid-size online brands (e-commerce, fashion, comparison sites) |
 | **Channel / motion** | Direct outreach on LinkedIn + personal network; offer free reports for their brand |
 | **Deliverable** | 3 free personalized reports + a 15-min feedback call with each team |
 | **Success metric** | At least 2 of 3 teams say they would use it monthly; at least 1 asks for a second report |
@@ -22,7 +22,7 @@ These sprints come **after** the MVP. They are not built yet.
 | | |
 |---|---|
 | **Goal** | Turn the agent into a repeatable service that agencies can resell to their clients |
-| **Audience** | Small SEO agencies offering GEO / AI search services |
+| **Target user / buyer** | Small SEO agencies offering GEO / AI search services |
 | **Channel / motion** | Partnership outreach to agencies; white-label weekly report as a paid add-on |
 | **Deliverable** | Scheduled weekly runs, results history in Google Sheets (visibility trends over time), simple pricing page |
 | **Success metric** | 1 agency signs a paid pilot; 5+ client brands tracked weekly |
@@ -32,7 +32,7 @@ These sprints come **after** the MVP. They are not built yet.
 | | |
 |---|---|
 | **Goal** | Build awareness and inbound leads by publishing real insights from the agent |
-| **Audience** | Marketing leads and the SEO community on LinkedIn |
+| **Target user / buyer** | Marketing leads and the SEO community on LinkedIn |
 | **Channel / motion** | Weekly LinkedIn posts with benchmark findings (e.g. "Zalando wins AI answers, ABOUT YOU wins Google") + free report offer |
 | **Deliverable** | 4 benchmark posts (fashion, sportswear, + 2 more industries) and a free report request form |
 | **Success metric** | 20+ free report requests; 3+ qualified leads (companies asking for regular tracking) |

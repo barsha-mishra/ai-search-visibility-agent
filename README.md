@@ -144,6 +144,21 @@ python langgraph_helper/fact_checker.py langgraph_helper/sample_data.json report
 
 ---
 
+## Environment variables
+
+Set these in `.env` (see `.env.example`; real keys are never committed):
+
+| Variable | Used for |
+|---|---|
+| `OPEN_API_KEY` | OpenAI (tests, index script, fact-checker on Render) |
+| `SERPER_API_KEY` | Serper Google search (test script) |
+| `NEWS_API_KEY` | NewsAPI (test script) |
+| `PINECONE_API_KEY` | Pinecone index creation (test + index scripts) |
+
+In n8n, the same keys are stored as **n8n credentials** (OpenAI, Header Auth for Serper and NewsAPI, Pinecone, SMTP). On Render, `OPEN_API_KEY` is set as an environment variable.
+
+---
+
 ## File map
 
 ```

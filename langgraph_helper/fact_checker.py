@@ -34,16 +34,19 @@ def parse_json(text: str) -> dict:
         return {"issues": []}
 
 
-def build_evidence(data: dict) -> list:
-    """Full rankings and AI mentions per query, used as extra evidence."""
-    return [
-        {
-            "query": r.get("query"),
-            "google_positions": r.get("google_positions"),
-            "ai_mentions": r.get("ai_mentions"),
-        }
-        for r in data.get("results", [])
-    ]
+def build_evidence(data: dict) -> dict:
+    """Full rankings, AI mentions and scores, used as extra evidence."""
+    return {
+        "results": [
+            {
+                "query": r.get("query"),
+                "google_positions": r.get("google_positions"),
+                "ai_mentions": r.get("ai_mentions"),
+            }
+            for r in data.get("results", [])
+        ],
+        "visibility_scores": data.get("visibility_scores", []),
+    }
 
 
 # ---------- Node 1: find suspected mistakes ----------
@@ -54,8 +57,10 @@ def check_facts(state: State) -> dict:
 IMPORTANT:
 - Google position 1 is the BEST. A lower number means a better ranking.
 - KEY FACTS are calculated by code and are ALWAYS correct.
-- Only flag a claim if it clearly contradicts one specific key fact.
-- If a claim agrees with the key facts, it is correct. Do not flag it.
+- Only check normal sentences. Do NOT check table rows (lines starting with "|"):
+  tables are generated directly from the data and are always correct.
+- Only flag a sentence if it clearly contradicts one specific key fact.
+- If a sentence agrees with the key facts, it is correct. Do not flag it.
 
 For each error, quote the exact key fact it contradicts (copy it word for word).
 Return ONLY JSON: {{"issues": [{{"claim": "the wrong sentence", "fact": "exact key fact"}}]}}
@@ -68,10 +73,12 @@ REPORT:
 {state["report"]}"""
     result = parse_json(llm.invoke(prompt).content)
 
-    # Keep only suspected issues that point to a real key fact
+    # Keep only suspected issues that point to a real key fact and are not table rows
     candidates = [
         i for i in result.get("issues", [])
-        if isinstance(i, dict) and i.get("fact") in key_facts
+        if isinstance(i, dict)
+        and i.get("fact") in key_facts
+        and not str(i.get("claim", "")).strip().startswith("|")
     ]
     print(f"🔍 Check {state['attempts'] + 1}: {len(candidates)} suspected issue(s)")
     return {"candidates": candidates}
@@ -85,10 +92,12 @@ def verify_issues(state: State) -> dict:
     for issue in state["candidates"]:
         prompt = f"""Google position 1 is the BEST; a lower number means a better ranking.
 "not in top 10" means the brand does not rank at all in the top 10.
+AI mention ranks (#1, #2) are the order among tracked brands only.
 
-Using the FACT and the DATA below, is the CLAIM false?
-Answer YES if the claim contradicts the fact or the data.
-Answer NO if the claim is correct.
+Is the CLAIM factually wrong according to the FACT and the DATA?
+Answer YES only if a specific number, ranking, percentage or "who is ahead" statement
+in the claim is clearly wrong.
+Answer NO if the claim is correct, roughly correct, or just worded differently.
 Answer with only YES or NO.
 
 CLAIM: {issue.get("claim")}

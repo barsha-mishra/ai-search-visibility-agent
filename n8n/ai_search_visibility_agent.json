@@ -36,7 +36,7 @@
       "typeVersion": 2.5,
       "position": [
         0,
-        -16
+        -32
       ],
       "id": "7ab44ec5-4665-48ac-8b6b-5e1fa310f7e8",
       "name": "On form submission",
@@ -44,13 +44,13 @@
     },
     {
       "parameters": {
-        "jsCode": "const f = $('On form submission').first().json;\n\nconst brand = (f.brand || '').trim();\nconst country = (f.country || '').trim();\nconst competitors = (f.competitors || '')\n  .split(',').map(c => c.trim()).filter(c => c);\nconst queries = (f.queries || '')\n  .split('\\n').map(q => q.trim()).filter(q => q);\n\n// Validation: stop with a clear message if input is missing\nif (!brand || !country || competitors.length === 0 || queries.length === 0) {\n  throw new Error('Missing input: brand, country, competitors and queries are required.');\n}\n\n// One item per query\nreturn queries.map(query => ({\n  json: { brand, competitors, allBrands: [brand, ...competitors], country, query }\n}));"
+        "jsCode": "const f = $('On form submission').first().json;\n\nconst brand = (f.brand || '').trim();\nconst country = (f.country || '').trim();\nconst competitors = (f.competitors || '')\n  .split(',').map(c => c.trim()).filter(c => c);\nconst queries = (f.queries || '')\n  .split('\\n').map(q => q.trim()).filter(q => q);\n\nconst MAX_COMPETITORS = 4;\nconst MAX_QUERIES = 6;\n\n// Validation: stop with a clear message if input is missing\nif (!brand || !country || competitors.length === 0 || queries.length === 0) {\n  throw new Error('Missing input: brand, country, competitors and queries are required.');\n}\n\n// Limits: protect API costs and keep the report readable\nif (competitors.length > MAX_COMPETITORS) {\n  throw new Error(`Too many competitors (${competitors.length}). Please use max ${MAX_COMPETITORS}.`);\n}\nif (queries.length > MAX_QUERIES) {\n  throw new Error(`Too many queries (${queries.length}). Please use max ${MAX_QUERIES}.`);\n}\n\n// No duplicates: the brand should not also be listed as a competitor\nif (competitors.some(c => c.toLowerCase() === brand.toLowerCase())) {\n  throw new Error('The brand is also listed as a competitor. Please remove it from the competitors.');\n}\n\n// One item per query\nreturn queries.map(query => ({\n  json: { brand, competitors, allBrands: [brand, ...competitors], country, query }\n}));"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
         448,
-        -16
+        -32
       ],
       "id": "f5bf8c55-518c-40c0-bed5-e1e02c841fc6",
       "name": "Clean & validate input"
@@ -63,7 +63,7 @@
       "typeVersion": 2,
       "position": [
         896,
-        -16
+        -32
       ],
       "id": "e52abb3d-3587-4a14-8b89-8a5f5921d198",
       "name": "Extract Google positions"
@@ -97,7 +97,7 @@
       "typeVersion": 4.4,
       "position": [
         672,
-        -16
+        -32
       ],
       "id": "e705722b-7d64-484d-a83b-f804477ab781",
       "name": "Serper - Google results",
@@ -135,7 +135,7 @@
       "typeVersion": 2.1,
       "position": [
         1120,
-        -16
+        -32
       ],
       "id": "c547626c-77eb-4a1d-b130-2bdae5dc1481",
       "name": "OpenAI - AI answer check",
@@ -158,7 +158,7 @@
       "typeVersion": 2,
       "position": [
         1472,
-        -16
+        -32
       ],
       "id": "480dfc3b-88f5-4928-873f-91bcce1c9647",
       "name": "Combine Google + AI"
@@ -171,7 +171,7 @@
       "typeVersion": 2,
       "position": [
         1696,
-        -16
+        -32
       ],
       "id": "fc8da041-30ee-490f-984c-aba0a841b244",
       "name": "Brands for news"
@@ -212,7 +212,7 @@
       "typeVersion": 4.4,
       "position": [
         1920,
-        -16
+        -32
       ],
       "id": "04500f67-a095-4b61-88bc-f9c657e884a1",
       "name": "NewsAPI - brand news",
@@ -229,13 +229,13 @@
     },
     {
       "parameters": {
-        "jsCode": "const brands = $('Brands for news').all().map(i => i.json.brandName);\nconst queries = $('Combine Google + AI').all().map(i => i.json);\n\n// Keep only news that really mention the brand\nconst news = {};\n$input.all().forEach((item, i) => {\n  const b = brands[i];\n  const key = b.toLowerCase();\n  if (item.json.error) {\n    news[b] = 'News data missing (API error)';\n    return;\n  }\n  const relevant = (item.json.articles || [])\n    .filter(a => {\n      const text = (a.title || '') + ' ' + (a.description || '');\n      // Brands written in capitals (e.g. ABOUT YOU) must match exactly\n      const strict = b === b.toUpperCase() && b.length > 4;\n      return strict ? text.includes(b) : text.toLowerCase().includes(key);\n    })\n    .slice(0, 3)\n    .map(a => ({\n      title: a.title,\n      source: a.source?.name,\n      date: (a.publishedAt || '').slice(0, 10),\n      url: a.url,\n    }));\n  news[b] = relevant.length ? relevant : 'No relevant news found';\n});\n\n// Put everything into one package for the report\nconst first = queries[0];\nreturn [{\n  json: {\n    brand: first.brand,\n    competitors: first.allBrands.slice(1),\n    country: first.country,\n    date: new Date().toISOString().slice(0, 10),\n    results: queries.map(q => ({\n      query: q.query,\n      google_positions: q.google_positions,\n      google_top3: q.google_top3,\n      ai_mentions: q.ai_mentions,\n      ai_answer: q.ai_answer,\n      errors: [q.google_error, q.ai_error].filter(Boolean),\n    })),\n    news,\n  },\n}];"
+        "jsCode": "const brands = $('Brands for news').all().map(i => i.json.brandName);\nconst queries = $('Combine Google + AI').all().map(i => i.json);\n\n// ---------- News: keep only articles that really mention the brand ----------\nconst news = {};\n$input.all().forEach((item, i) => {\n  const b = brands[i];\n  const key = b.toLowerCase();\n  if (item.json.error) {\n    news[b] = 'News data missing (API error)';\n    return;\n  }\n  const relevant = (item.json.articles || [])\n    .filter(a => {\n      const text = (a.title || '') + ' ' + (a.description || '');\n      // Brands written in capitals (e.g. ABOUT YOU) must match exactly\n      const strict = b === b.toUpperCase() && b.length > 4;\n      return strict ? text.includes(b) : text.toLowerCase().includes(key);\n    })\n    .slice(0, 3)\n    .map(a => ({\n      title: a.title,\n      source: a.source?.name,\n      date: (a.publishedAt || '').slice(0, 10),\n      url: a.url,\n    }));\n  news[b] = relevant.length ? relevant : 'No relevant news found';\n});\n\nconst first = queries[0];\n\n// ---------- Hidden competitors: brands the AI recommends that are NOT tracked ----------\nconst tracked = first.allBrands.map(x => x.toLowerCase());\nconst found = {};\nfor (const q of queries) {\n  // Brand names are usually in **bold** in the AI answers\n  const names = [...(q.ai_answer || '').matchAll(/\\*\\*(.+?)\\*\\*/g)].map(m => m[1]);\n  const seenInThisAnswer = new Set();\n  for (const raw of names) {\n    const name = raw.replace(/\\s[-–]\\s.*$/, '').replace(/:$/, '').trim();\n    const low = name.toLowerCase();\n    if (!name || name.length > 30) continue;\n    if (tracked.some(t => low.includes(t) || t.includes(low))) continue; // skip tracked brands\n    if (seenInThisAnswer.has(low)) continue;\n    seenInThisAnswer.add(low);\n    found[low] = found[low] || { name, count: 0 };\n    found[low].count++;\n  }\n}\nconst hidden_competitors = Object.values(found)\n  .sort((a, b) => b.count - a.count)\n  .slice(0, 8)\n  .map(h => ({ name: h.name, mentioned_in: `${h.count} of ${queries.length} AI answers` }));\n\n// ---------- Everything in one package for the report ----------\nreturn [{\n  json: {\n    brand: first.brand,\n    competitors: first.allBrands.slice(1),\n    country: first.country,\n    date: new Date().toISOString().slice(0, 10),\n    results: queries.map(q => ({\n      query: q.query,\n      google_positions: q.google_positions,\n      google_top3: q.google_top3,\n      ai_mentions: q.ai_mentions,\n      ai_answer: q.ai_answer,\n      errors: [q.google_error, q.ai_error].filter(Boolean),\n    })),\n    news,\n    hidden_competitors,\n  },\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
         2144,
-        -16
+        -32
       ],
       "id": "a2cac23e-34cf-4764-8be2-f84c54a7a991",
       "name": "Build final dataset"
@@ -247,8 +247,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
       "typeVersion": 1.2,
       "position": [
-        2448,
-        208
+        2440,
+        192
       ],
       "id": "64a6c5d0-b345-4f4e-a1de-edb7dbe73064",
       "name": "Embeddings OpenAI",
@@ -276,7 +276,7 @@
       "typeVersion": 1.3,
       "position": [
         2368,
-        -16
+        -32
       ],
       "id": "06ac7160-e591-4a63-9a22-6b6af3b66e07",
       "name": "RAG - SEO GEO guidelines",
@@ -295,7 +295,7 @@
       "typeVersion": 2,
       "position": [
         2720,
-        -16
+        -32
       ],
       "id": "42285143-2156-4f2b-9f0f-bfb414e76c15",
       "name": "Add guidelines"
@@ -312,7 +312,7 @@
           "values": [
             {
               "role": "system",
-              "content": "You are a senior SEO & GEO analyst. Write a clear, structured competitive visibility report in Markdown for an SEO/GEO manager.\n\nRules:\n- Use ONLY the data provided. Never invent rankings, mentions or news.\n- Compare the main brand against each competitor.\n- Use key_facts as the ONLY source for comparisons between brands. Do not compare positions yourself.\n- Never claim a competitor beats the brand unless key_facts clearly show it.\n- Google position 1 is the best; a lower number means a better ranking.\n- AI mention ranks (#1, #2…) are the order among the tracked brands only. Write \"first among tracked brands\", not \"first overall\".\n- Keep it concise: max 1 page.\n\nSection rules:\n- Section 1: a summary of 3–4 sentences. Then add a small table from visibility_scores with columns: Brand | Google visibility | Avg. Google position | AI visibility | First among tracked in AI | Overall score. Copy the values exactly.\n- Section 2: a table with one row per query and one column per brand, showing Google positions.\n- Section 3: a table with one row per query and one column per brand, showing AI mentions, plus 1–2 sentences.\n- Section 4: max 2 bullets per brand.\n- Section 5: where competitors win and the brand doesn't.\n- Section 6: 3–5 concrete actions the team can start this week. Each must name one specific query or competitor it addresses, and be based on the provided guidelines, with the guideline source in brackets.\n- Section 7: list the data sources: Serper (Google results), OpenAI (AI answer check), NewsAPI (news), Pinecone (SEO/GEO guidelines), plus the date and any missing data or errors.\n\nUse exactly this structure:\n# AI Search Visibility Report: {brand} vs Competitors\n{date} | {country} | {number} queries checked\n## 1. Summary\n## 2. Google Visibility\n## 3. AI Answer Visibility\n## 4. News & Brand Signals\n## 5. Gaps & Opportunities\n## 6. Recommendations\n## 7. Sources & Data Notes"
+              "content": "You are a senior SEO & GEO analyst. Write a clear, structured competitive visibility report in Markdown for an SEO/GEO manager.\n\nRules:\n- Use ONLY the data provided. Never invent rankings, mentions or news.\n- Compare the main brand against each competitor.\n- Use key_facts as the ONLY source for comparisons between brands. Do not compare positions yourself.\n- Never claim a competitor beats the brand unless key_facts clearly show it.\n- Google position 1 is the best; a lower number means a better ranking.\n- AI mention ranks (#1, #2…) are the order among the tracked brands only. Write \"first among tracked brands\", not \"first overall\".\n- Keep it concise: max 1 page.\n\nSection rules:\n- Section 1: a summary of 3–4 sentences. Then add a small table from visibility_scores with columns: Brand | Google visibility | Avg. Google position | AI visibility | First among tracked in AI | Overall score. Copy the values exactly.\n- Section 2: a table with one row per query and one column per brand, showing Google positions.\n- Section 3: a table with one row per query and one column per brand, showing AI mentions, plus 1–2 sentences.\n- Section 4: max 2 bullets per brand.\n- Section 5: where competitors win and the brand doesn't. If hidden_competitors is not empty, add one bullet naming them (brands the AI recommends that are not tracked), with their counts copied exactly.\n- Section 6: 3–5 concrete actions the team can start this week. Each must name one specific query or competitor it addresses, and be based on the provided guidelines, with the guideline source in brackets.\n- Section 7: list the data sources: Serper (Google results), OpenAI (AI answer check), NewsAPI (news), Pinecone (SEO/GEO guidelines), plus the date and any missing data or errors.\n\nUse exactly this structure:\n# AI Search Visibility Report: {brand} vs Competitors\n{date} | {country} | {number} queries checked\n## 1. Summary\n## 2. Google Visibility\n## 3. AI Answer Visibility\n## 4. News & Brand Signals\n## 5. Gaps & Opportunities\n## 6. Recommendations\n## 7. Sources & Data Notes"
             },
             {
               "role": "=user",
@@ -327,7 +327,7 @@
       "typeVersion": 2.1,
       "position": [
         2944,
-        -16
+        -32
       ],
       "id": "9961c3f5-d31b-4020-bd05-93a60e3569c7",
       "name": "OpenAI - write report",
@@ -349,7 +349,7 @@
       "typeVersion": 2,
       "position": [
         3296,
-        -16
+        -32
       ],
       "id": "544907fa-c2fc-4c0f-ba02-611790b4245a",
       "name": "Extract report text"
@@ -365,8 +365,8 @@
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        4176,
-        -16
+        4192,
+        -32
       ],
       "id": "33707445-55fa-4888-9145-6ce3a97d4ffb",
       "name": "Create report file"
@@ -386,7 +386,7 @@
       "typeVersion": 4.4,
       "position": [
         3520,
-        -16
+        -32
       ],
       "id": "0e494644-613b-4c51-ba88-6dea4fb467e4",
       "name": "LangGraph - fact-check",
@@ -403,7 +403,7 @@
       "typeVersion": 2,
       "position": [
         3744,
-        -16
+        -32
       ],
       "id": "0c1c1f95-2259-4380-b671-b704f9049738",
       "name": "Use checked report"
@@ -421,8 +421,8 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        4400,
-        -16
+        4416,
+        -32
       ],
       "id": "347eac87-b16e-41f2-bbe7-f416addcd905",
       "name": "Send report by email",
@@ -449,7 +449,7 @@
       "typeVersion": 4.4,
       "position": [
         224,
-        -16
+        -32
       ],
       "id": "069780a7-5ec2-4b5a-bc1f-17bc4988ab84",
       "name": "Wake up fact-checker",
@@ -457,13 +457,13 @@
     },
     {
       "parameters": {
-        "jsCode": "const input = $input.first().json;            // report, fileName, fact_check_status\nconst d = $('Add guidelines').first().json;   // research data + scores\nconst brands = [d.brand, ...d.competitors];\n\n// ---------- Helpers ----------\nconst esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst inline = s => esc(s)\n  .replace(/\\*\\*(.+?)\\*\\*/g, '<b>$1</b>')\n  .replace(/\\[(.+?)\\]/g, '<span style=\"color:#6b7280;font-size:12px;\">[$1]</span>');\n\n// Split the Markdown report into sections (\"## 1. Summary\" etc.)\nconst sections = {};\ninput.report.split(/\\n(?=## )/).forEach(block => {\n  const m = block.match(/^## \\d+\\.\\s*(.+)/);\n  if (m) sections[m[1].trim().toLowerCase()] = block.split('\\n').slice(1).join('\\n').trim();\n});\nconst getSec = name => Object.entries(sections).find(([k]) => k.startsWith(name))?.[1] || '';\n\n// Small Markdown -> HTML (paragraphs, bullets, numbered lists; tables are skipped)\nfunction mdToHtml(md) {\n  const lines = md.split('\\n').filter(l =>\n    !l.trim().startsWith('|') && !l.startsWith('---') && !l.startsWith('*Fact-check'));\n  let html = '', list = null;\n  const close = () => { if (list) { html += `</${list}>`; list = null; } };\n  for (const raw of lines) {\n    const l = raw.trim();\n    if (!l) { close(); continue; }\n    let m;\n    if ((m = l.match(/^[-*]\\s+(.*)/))) {\n      if (list !== 'ul') { close(); html += '<ul style=\"padding-left:20px;margin:8px 0;\">'; list = 'ul'; }\n      html += `<li style=\"margin:6px 0;\">${inline(m[1])}</li>`;\n    } else if ((m = l.match(/^\\d+\\.\\s+(.*)/))) {\n      if (list !== 'ol') { close(); html += '<ol style=\"padding-left:20px;margin:8px 0;\">'; list = 'ol'; }\n      html += `<li style=\"margin:6px 0;\">${inline(m[1])}</li>`;\n    } else {\n      close();\n      html += `<p style=\"margin:8px 0;\">${inline(l)}</p>`;\n    }\n  }\n  close();\n  return html;\n}\n\n// ---------- Building blocks ----------\nconst pct = s => parseInt(s) || 0;\nconst bar = (value, color) => `\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#eef0f4;border-radius:6px;\"><tr>\n    <td width=\"${Math.max(value, 1)}%\" style=\"background:${color};height:10px;border-radius:6px;font-size:0;line-height:0;\">&nbsp;</td>\n    <td style=\"font-size:0;line-height:0;\">&nbsp;</td>\n  </tr></table>`;\n\nconst th = t => `<th style=\"background:#f3f4f6;padding:8px;font-size:12px;text-align:left;color:#374151;\">${esc(t)}</th>`;\nconst td = (content, bg = '#ffffff', color = '#111827') =>\n  `<td style=\"padding:8px;font-size:13px;background:${bg};color:${color};border-bottom:1px solid #eef0f4;\">${content}</td>`;\nconst gCell = p => typeof p === 'number'\n  ? (p <= 3 ? td('#' + p, '#dcfce7', '#166534') : td('#' + p, '#fef9c3', '#854d0e'))\n  : td('—', '#fee2e2', '#991b1b');\nconst aCell = m => {\n  const r = /#(\\d+)/.exec(m || '');\n  if (!r) return td('—', '#fee2e2', '#991b1b');\n  return r[1] === '1' ? td('✔ #1', '#dcfce7', '#166534') : td('✔ #' + r[1], '#ecfdf5', '#065f46');\n};\nconst section = (title, body) => `\n  <tr><td style=\"padding:24px 32px;border-top:1px solid #eef0f4;\">\n    <h2 style=\"margin:0 0 12px;font-size:18px;color:#111827;\">${title}</h2>${body}\n  </td></tr>`;\n\n// ---------- Score cards ----------\nconst scoreRows = (d.visibility_scores || []).map(s => {\n  const main = s.brand === d.brand;\n  const cell = 'padding:10px 8px;border-bottom:1px solid #eef0f4;';\n  return `<tr>\n    <td style=\"${cell}font-weight:${main ? '700' : '400'};color:${main ? '#4f46e5' : '#111827'};white-space:nowrap;\">${esc(s.brand)}</td>\n    <td style=\"${cell}width:30%;\">${bar(pct(s.google_visibility), '#3b82f6')}\n      <div style=\"font-size:12px;color:#6b7280;margin-top:4px;\">${esc(s.google_visibility)} · avg pos ${esc(s.avg_google_position)}</div></td>\n    <td style=\"${cell}width:30%;\">${bar(pct(s.ai_visibility), '#10b981')}\n      <div style=\"font-size:12px;color:#6b7280;margin-top:4px;\">${esc(s.ai_visibility)} · first ${esc(s.first_among_tracked_in_ai)}</div></td>\n    <td style=\"${cell}text-align:center;font-size:20px;font-weight:700;color:#111827;\">${esc(s.overall_score)}</td>\n  </tr>`;\n}).join('');\nconst scoreTable = `\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\n    <tr>${th('Brand')}${th('Google')}${th('AI answers')}${th('Overall')}</tr>${scoreRows}\n  </table>\n  <p style=\"font-size:12px;color:#6b7280;margin-top:8px;\">Google = share of queries in the top 10. AI = share of AI answers mentioning the brand.</p>`;\n\n// ---------- Google & AI tables ----------\nconst headerRow = `<tr>${th('Query')}${brands.map(th).join('')}</tr>`;\nconst googleTable = `\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">${headerRow}\n    ${d.results.map(r => `<tr>${td(esc(r.query))}${brands.map(b => gCell(r.google_positions[b])).join('')}</tr>`).join('')}\n  </table>\n  <p style=\"font-size:12px;color:#6b7280;margin-top:8px;\">Green = top 3 · Yellow = #4–10 · Red = not in top 10</p>`;\nconst aiTable = `\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">${headerRow}\n    ${d.results.map(r => `<tr>${td(esc(r.query))}${brands.map(b => aCell(r.ai_mentions[b])).join('')}</tr>`).join('')}\n  </table>\n  <p style=\"font-size:12px;color:#6b7280;margin-top:8px;\">✔ #1 = first among tracked brands · — = not mentioned</p>`;\n\n// ---------- News ----------\nconst newsHtml = brands.map(b => {\n  const items = d.news?.[b];\n  const list = Array.isArray(items)\n    ? items.slice(0, 2).map(n => `<li style=\"margin:4px 0;\">\n        <a href=\"${esc(n.url)}\" style=\"color:#4f46e5;text-decoration:none;\">${esc(n.title)}</a>\n        <span style=\"color:#9ca3af;font-size:12px;\"> ${esc(n.source)}, ${esc(n.date)}</span></li>`).join('')\n    : `<li style=\"color:#9ca3af;\">${esc(items || 'No news')}</li>`;\n  return `<p style=\"margin:12px 0 4px;font-weight:700;\">${esc(b)}</p><ul style=\"padding-left:20px;margin:0;font-size:13px;\">${list}</ul>`;\n}).join('');\n\n// ---------- Fact-check badge ----------\nconst passed = input.fact_check_status === 'passed';\nconst badge = `<span style=\"background:${passed ? '#dcfce7' : '#ffedd5'};color:${passed ? '#166534' : '#9a3412'};padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700;\">Fact-check: ${esc(input.fact_check_status)}</span>`;\n\n// ---------- Full email ----------\nconst html = `\n<div style=\"background:#f3f4f6;padding:24px 0;font-family:Arial,Helvetica,sans-serif;\">\n<table width=\"100%\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:12px;max-width:640px;margin:0 auto;\">\n  <tr><td style=\"background:#4f46e5;padding:28px 32px;color:#ffffff;border-radius:12px 12px 0 0;\">\n    <div style=\"font-size:12px;letter-spacing:1px;text-transform:uppercase;\">AI Search Visibility Report</div>\n    <div style=\"font-size:24px;font-weight:700;margin-top:6px;\">${esc(d.brand)} vs Competitors</div>\n    <div style=\"font-size:13px;margin-top:8px;\">${esc(d.date)} · ${esc(d.country)} · ${d.results.length} queries checked</div>\n  </td></tr>\n  <tr><td style=\"padding:16px 32px 0;\">${badge}</td></tr>\n  ${section('Summary', mdToHtml(getSec('summary')))}\n  ${section('Visibility Score', scoreTable)}\n  ${section('Google Visibility', googleTable)}\n  ${section('AI Answer Visibility', aiTable)}\n  ${section('Gaps & Opportunities', mdToHtml(getSec('gaps')))}\n  ${section('Recommendations', mdToHtml(getSec('recommendations')))}\n  ${section('News & Brand Signals', newsHtml)}\n  <tr><td style=\"padding:20px 32px;background:#f9fafb;font-size:12px;color:#6b7280;border-radius:0 0 12px 12px;\">\n    Sources: Serper (Google results), OpenAI (AI answer check), NewsAPI (news), Pinecone (SEO/GEO guidelines).<br>\n    Full report attached as a Markdown file. Generated automatically by the AI Search Visibility Agent.\n  </td></tr>\n</table>\n</div>`;\n\nreturn [{ json: { ...input, html } }];"
+        "jsCode": "const input = $input.first().json;            // report, fileName, fact_check_status\nconst d = $('Add guidelines').first().json;   // research data + scores\nconst brands = [d.brand, ...d.competitors];\n\n// ---------- Helpers ----------\nconst esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst inline = s => esc(s)\n  .replace(/\\*\\*(.+?)\\*\\*/g, '<b>$1</b>')\n  .replace(/\\[(.+?)\\]/g, '<span style=\"color:#6b7280;font-size:12px;\">[$1]</span>');\n\n// Split the Markdown report into sections (\"## 1. Summary\" etc.)\nconst sections = {};\ninput.report.split(/\\n(?=## )/).forEach(block => {\n  const m = block.match(/^## \\d+\\.\\s*(.+)/);\n  if (m) sections[m[1].trim().toLowerCase()] = block.split('\\n').slice(1).join('\\n').trim();\n});\nconst getSec = name => Object.entries(sections).find(([k]) => k.startsWith(name))?.[1] || '';\n\n// Small Markdown -> HTML (paragraphs, bullets, numbered lists; tables are skipped)\nfunction mdToHtml(md) {\n  const lines = md.split('\\n').filter(l =>\n    !l.trim().startsWith('|') && !l.startsWith('---') && !l.startsWith('*Fact-check'));\n  let html = '', list = null;\n  const close = () => { if (list) { html += `</${list}>`; list = null; } };\n  for (const raw of lines) {\n    const l = raw.trim();\n    if (!l) { close(); continue; }\n    let m;\n    if ((m = l.match(/^[-*]\\s+(.*)/))) {\n      if (list !== 'ul') { close(); html += '<ul style=\"padding-left:20px;margin:8px 0;\">'; list = 'ul'; }\n      html += `<li style=\"margin:6px 0;\">${inline(m[1])}</li>`;\n    } else if ((m = l.match(/^\\d+\\.\\s+(.*)/))) {\n      if (list !== 'ol') { close(); html += '<ol style=\"padding-left:20px;margin:8px 0;\">'; list = 'ol'; }\n      html += `<li style=\"margin:6px 0;\">${inline(m[1])}</li>`;\n    } else {\n      close();\n      html += `<p style=\"margin:8px 0;\">${inline(l)}</p>`;\n    }\n  }\n  close();\n  return html;\n}\n\n// ---------- Building blocks ----------\nconst pct = s => parseInt(s) || 0;\nconst bar = (value, color) => `\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#eef0f4;border-radius:6px;\"><tr>\n    <td width=\"${Math.max(value, 1)}%\" style=\"background:${color};height:10px;border-radius:6px;font-size:0;line-height:0;\">&nbsp;</td>\n    <td style=\"font-size:0;line-height:0;\">&nbsp;</td>\n  </tr></table>`;\n\nconst th = t => `<th style=\"background:#f3f4f6;padding:8px;font-size:12px;text-align:left;color:#374151;\">${esc(t)}</th>`;\nconst td = (content, bg = '#ffffff', color = '#111827') =>\n  `<td style=\"padding:8px;font-size:13px;background:${bg};color:${color};border-bottom:1px solid #eef0f4;\">${content}</td>`;\nconst gCell = p => typeof p === 'number'\n  ? (p <= 3 ? td('#' + p, '#dcfce7', '#166534') : td('#' + p, '#fef9c3', '#854d0e'))\n  : td('—', '#fee2e2', '#991b1b');\nconst aCell = m => {\n  const r = /#(\\d+)/.exec(m || '');\n  if (!r) return td('—', '#fee2e2', '#991b1b');\n  return r[1] === '1' ? td('✔ #1', '#dcfce7', '#166534') : td('✔ #' + r[1], '#ecfdf5', '#065f46');\n};\nconst section = (title, body) => `\n  <tr><td style=\"padding:24px 32px;border-top:1px solid #eef0f4;\">\n      <h2 style=\"margin:0 0 12px;font-size:18px;color:#111827;border-left:4px solid #4f46e5;padding-left:10px;\">${title}</h2>${body}\n  </td></tr>`;\n\n// ---------- Score cards ----------\nconst scoreRows = (d.visibility_scores || []).map(s => {\n  const main = s.brand === d.brand;\n  const cell = 'padding:10px 8px;border-bottom:1px solid #eef0f4;';\n  return `<tr>\n    <td style=\"${cell}font-weight:${main ? '700' : '400'};color:${main ? '#4f46e5' : '#111827'};white-space:nowrap;\">${esc(s.brand)}</td>\n    <td style=\"${cell}width:30%;\">${bar(pct(s.google_visibility), '#3b82f6')}\n      <div style=\"font-size:12px;color:#6b7280;margin-top:4px;\">${esc(s.google_visibility)} · avg pos ${esc(s.avg_google_position)}</div></td>\n    <td style=\"${cell}width:30%;\">${bar(pct(s.ai_visibility), '#10b981')}\n      <div style=\"font-size:12px;color:#6b7280;margin-top:4px;\">${esc(s.ai_visibility)} · first ${esc(s.first_among_tracked_in_ai)}</div></td>\n        <td style=\"${cell}text-align:center;font-size:20px;font-weight:700;color:${pct(s.overall_score) >= 70 ? '#16a34a' : pct(s.overall_score) >= 40 ? '#ca8a04' : '#dc2626'};\">${esc(s.overall_score)}</td>\n  </tr>`;\n}).join('');\nconst scoreTable = `\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\n    <tr>${th('Brand')}${th('Google')}${th('AI answers')}${th('Overall')}</tr>${scoreRows}\n  </table>\n  <p style=\"font-size:12px;color:#6b7280;margin-top:8px;\">Google = share of queries in the top 10. AI = share of AI answers mentioning the brand.</p>`;\n\n// ---------- Google & AI tables ----------\nconst headerRow = `<tr>${th('Query')}${brands.map(th).join('')}</tr>`;\nconst googleTable = `\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">${headerRow}\n    ${d.results.map(r => `<tr>${td(esc(r.query))}${brands.map(b => gCell(r.google_positions[b])).join('')}</tr>`).join('')}\n  </table>\n  <p style=\"font-size:12px;color:#6b7280;margin-top:8px;\">Green = top 3 · Yellow = #4–10 · Red = not in top 10</p>`;\nconst aiTable = `\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">${headerRow}\n    ${d.results.map(r => `<tr>${td(esc(r.query))}${brands.map(b => aCell(r.ai_mentions[b])).join('')}</tr>`).join('')}\n  </table>\n  <p style=\"font-size:12px;color:#6b7280;margin-top:8px;\">✔ #1 = first among tracked brands · — = not mentioned</p>`;\n\n// ---------- Top 3 Google results per query ----------\nconst top3Html = d.results.map(r => `\n  <p style=\"margin:12px 0 4px;font-weight:700;font-size:13px;\">${esc(r.query)}</p>\n  <ol style=\"padding-left:20px;margin:0;font-size:13px;color:#374151;\">\n    ${(r.google_top3 || []).map(t => `<li style=\"margin:3px 0;\">${esc(t)}</li>`).join('') || '<li style=\"color:#9ca3af;\">No results</li>'}\n  </ol>`).join('');\n\n// ---------- News ----------\nconst newsHtml = brands.map(b => {\n  const items = d.news?.[b];\n  const list = Array.isArray(items)\n    ? items.slice(0, 2).map(n => `<li style=\"margin:4px 0;\">\n        <a href=\"${esc(n.url)}\" style=\"color:#4f46e5;text-decoration:none;\">${esc(n.title)}</a>\n        <span style=\"color:#9ca3af;font-size:12px;\"> ${esc(n.source)}, ${esc(n.date)}</span></li>`).join('')\n    : `<li style=\"color:#9ca3af;\">${esc(items || 'No news')}</li>`;\n  return `<p style=\"margin:12px 0 4px;font-weight:700;\">${esc(b)}</p><ul style=\"padding-left:20px;margin:0;font-size:13px;\">${list}</ul>`;\n}).join('');\n\n// ---------- Hidden competitors ----------\nconst hidden = d.hidden_competitors || [];\nconst hiddenHtml = hidden.length\n  ? `<p style=\"margin:0 0 10px;font-size:13px;color:#374151;\">Brands AI assistants recommend that are <b>not in your tracked list</b>:</p>` +\n    hidden.map(h => `<span style=\"display:inline-block;background:#eef2ff;color:#3730a3;padding:6px 10px;border-radius:14px;font-size:12px;margin:0 6px 6px 0;\">${esc(h.name)} · ${esc(h.mentioned_in)}</span>`).join('')\n  : '<p style=\"font-size:13px;color:#6b7280;\">No untracked brands found in AI answers.</p>';\n\n// ---------- Top 3 actions (first 3 recommendations) ----------\nconst recLines = getSec('recommendations').split('\\n')\n  .map(l => l.trim().match(/^(?:\\d+\\.|[-*])\\s+(.*)/))\n  .filter(Boolean)\n  .map(m => m[1])\n  .slice(0, 3);\nconst topActionsHtml = recLines.length ? `\n  <tr><td style=\"padding:16px 32px 0;\">\n    <div style=\"background:#eef2ff;border-left:4px solid #4f46e5;border-radius:8px;padding:14px 18px;\">\n      <div style=\"font-size:12px;font-weight:700;color:#4f46e5;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;\">Top 3 actions this week</div>\n      <ol style=\"padding-left:20px;margin:0;font-size:13px;color:#1f2937;\">\n        ${recLines.map(r => `<li style=\"margin:6px 0;\">${inline(r)}</li>`).join('')}\n      </ol>\n    </div>\n  </td></tr>` : '';\n\n// ---------- How to read this report (fixed text) ----------\nconst howToReadHtml = `\n  <ul style=\"padding-left:20px;margin:0;font-size:13px;color:#374151;\">\n    <li style=\"margin:5px 0;\"><b>Google visibility:</b> share of the checked queries where the brand ranks in Google's top 10.</li>\n    <li style=\"margin:5px 0;\"><b>Avg. Google position:</b> average position where the brand ranks; lower is better (#1 is the top).</li>\n    <li style=\"margin:5px 0;\"><b>AI visibility:</b> share of AI answers that mention the brand.</li>\n    <li style=\"margin:5px 0;\"><b>First among tracked:</b> how often the brand is named before all other tracked brands in an AI answer.</li>\n    <li style=\"margin:5px 0;\"><b>Overall score:</b> average of Google and AI visibility.</li>\n    <li style=\"margin:5px 0;\"><b>Hidden competitors:</b> brands the AI recommends that are not in your tracked list.</li>\n  </ul>`;\n\n// ---------- Methodology (fixed text) ----------\nconst methodologyHtml = `\n  <p style=\"margin:0;font-size:13px;color:#374151;line-height:1.5;\">\n    For each query, the agent collects live Google results (Serper), asks an AI assistant the same question (OpenAI API)\n    and gathers recent brand news (NewsAPI). Comparisons and scores are calculated in code, not by the AI.\n    Recommendations are grounded in Google Search Central guidance and GEO research via RAG (Pinecone).\n    Before delivery, a LangGraph fact-checker verifies the report against the data and corrects errors.\n    Results are a snapshot of the run date, since Google results and AI answers change over time.\n  </p>`;\n\n// ---------- AI Share of Voice (pie chart via QuickChart) ----------\nconst mentionCounts = brands.map(b =>\n  d.results.filter(r => /#\\d+/.test(r.ai_mentions[b] || '')).length\n);\nconst totalMentions = mentionCounts.reduce((s, n) => s + n, 0);\nconst chartConfig = {\n  type: 'pie',\n  data: {\n    labels: brands,\n    datasets: [{\n      data: mentionCounts,\n      backgroundColor: ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#3b82f6'],\n    }],\n  },\n  options: {\n    plugins: {\n      legend: { position: 'right' },\n      title: { display: true, text: 'Share of AI answer mentions' },\n    },\n  },\n};\nconst chartUrl = 'https://quickchart.io/chart?w=500&h=280&v=4&c=' + encodeURIComponent(JSON.stringify(chartConfig));\nconst shareOfVoiceHtml = totalMentions\n  ? `<img src=\"${chartUrl}\" width=\"500\" alt=\"AI share of voice pie chart\" style=\"max-width:100%;height:auto;display:block;margin:0 auto;\">\n     <p style=\"font-size:12px;color:#6b7280;margin-top:8px;\">Each slice = how many AI answers mention the brand (tracked brands only).</p>`\n  : '<p style=\"font-size:13px;color:#6b7280;\">No tracked brand was mentioned in the AI answers.</p>';\n\n// ---------- Fact-check badge ----------\nconst passed = input.fact_check_status === 'passed';\nconst badge = `<span style=\"background:${passed ? '#dcfce7' : '#ffedd5'};color:${passed ? '#166534' : '#9a3412'};padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700;\">Fact-check: ${esc(input.fact_check_status)}</span>`;\n\n// ---------- Full email ----------\nconst html = `\n<div style=\"background:#f3f4f6;padding:24px 0;font-family:Arial,Helvetica,sans-serif;\">\n<table width=\"100%\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:12px;max-width:640px;margin:0 auto;\">\n  <tr><td style=\"background:#4f46e5;padding:28px 32px;color:#ffffff;border-radius:12px 12px 0 0;\">\n    <div style=\"font-size:12px;letter-spacing:1px;text-transform:uppercase;\">AI Search Visibility Report</div>\n    <div style=\"font-size:24px;font-weight:700;margin-top:6px;\">${esc(d.brand)} vs Competitors</div>\n    <div style=\"font-size:13px;margin-top:8px;\">${esc(d.date)} · ${esc(d.country)} · ${d.results.length} queries checked</div>\n  </td></tr>\n  <tr><td style=\"padding:16px 32px 0;\">${badge}</td></tr>\n  ${topActionsHtml}\n  ${section('📝 Summary', mdToHtml(getSec('summary')))}\n  ${section('📊 Visibility Score', scoreTable)}\n  ${section('🔎 Google Visibility', googleTable)}\n  ${section('🏆 Who Ranks in the Google Top 3', top3Html)}\n  ${section('🤖 AI Answer Visibility', aiTable)}\n  ${section('🥧 AI Share of Voice', shareOfVoiceHtml)}\n  ${section('👀 Hidden Competitors in AI Answers', hiddenHtml)}\n  ${section('🎯 Gaps & Opportunities', mdToHtml(getSec('gaps')))}\n  ${section('✅ Recommendations', mdToHtml(getSec('recommendations')))}\n  ${section('📰 News & Brand Signals', newsHtml)}\n  ${section('📖 How to Read This Report', howToReadHtml)}\n  ${section('🔬 Methodology', methodologyHtml)}\n  <tr><td style=\"padding:20px 32px;background:#f9fafb;font-size:12px;color:#6b7280;border-radius:0 0 12px 12px;\">\n    Sources: Serper (Google results), OpenAI (AI answer check), NewsAPI (news), Pinecone (SEO/GEO guidelines).<br>\n    Full report attached as a Markdown file. Generated automatically by the AI Search Visibility Agent.<br><br>\n    💬 <b>Questions or want weekly tracking for your brand?</b> Just reply to this email.\n  </td></tr>\n</table>\n</div>`;\n\nreturn [{ json: { ...input, html } }];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3952,
-        -16
+        3968,
+        -32
       ],
       "id": "1115a3de-45bd-41d2-aeff-3832b8e2e46d",
       "name": "Build HTML email"
@@ -686,7 +686,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "125e0dbc-4e35-495c-aba4-13e3860d68d2",
+  "versionId": "a4e2cf81-91b8-4eae-aed9-6ad893b42bed",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "49b42c0051ee1c04693c425c4d57eeb1072531f55d1515f0d9aeb5a5977f030a"

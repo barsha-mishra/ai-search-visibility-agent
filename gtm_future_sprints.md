@@ -2,7 +2,7 @@
 
 These sprints come **after** the MVP. They are not built yet.
 
-**MVP today:** one form-triggered run → Google + AI + news research → RAG-grounded, fact-checked report → email.
+**MVP today:** one form-triggered run → Google + AI + news research → visibility scores and hidden competitors → RAG-grounded, fact-checked report → designed email.
 **Goal of the sprints:** move from a working MVP to real users and a first paying customer.
 
 ---
@@ -24,7 +24,7 @@ These sprints come **after** the MVP. They are not built yet.
 | **Goal** | Turn the agent into a repeatable service that agencies can resell to their clients |
 | **Audience** | Small SEO agencies offering GEO / AI search services |
 | **Channel / motion** | Partnership outreach to agencies; white-label weekly report as a paid add-on |
-| **Deliverable** | Scheduled weekly runs, results history in Google Sheets, visibility score per brand, simple pricing page |
+| **Deliverable** | Scheduled weekly runs, results history in Google Sheets (visibility trends over time), simple pricing page |
 | **Success metric** | 1 agency signs a paid pilot; 5+ client brands tracked weekly |
 
 ## Sprint 3: LinkedIn "AI Visibility Benchmark" content launch (2 weeks)
@@ -45,5 +45,6 @@ These sprints come **after** the MVP. They are not built yet.
 |---|---|
 | On-demand run via form | Weekly scheduled runs |
 | OpenAI as AI assistant check | More assistants (Claude, Perplexity, Gemini) |
-| Report file + email | Results history, visibility score, dashboard |
+| Visibility score + hidden competitors per run | Results history and trends over time, dashboard |
+| Designed email report (English) | Report language choice (English/German) |
 | Single user | Agency / multi-client setup |

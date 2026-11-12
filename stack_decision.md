@@ -17,6 +17,8 @@ The main flow doesn't need complex agent loops, so LangGraph isn't needed for or
 
 This conditional check → verify → fix loop with shared state is exactly what LangGraph is built for, and would be hard to express cleanly in n8n. n8n calls it via HTTP and falls back to the original report if the service is unavailable, so the main flow always completes.
 
+I deployed it on Render (instead of running it locally with ngrok) so the agent works autonomously, even when my laptop is off. The free tier sleeps when idle, so the workflow wakes it up at the start of each run.
+
 ## Trade-offs
 
 | | n8n | LangGraph |

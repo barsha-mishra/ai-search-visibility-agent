@@ -17,12 +17,14 @@ You can ask ChatGPT "Is Zalando visible online?", but you'd get a one-off opinio
 
 - **Google + AI side by side:** real Google rankings (Serper) *and* what AI assistants actually answer, compared directly. ChatGPT can't tell you your live Google position.
 - **Real data, not guesses:** rankings, AI mentions and news come from live APIs, with dates and sources.
-- **Facts calculated in code:** brand comparisons are computed by the workflow, so the AI only writes, not compares.
+- **Facts calculated in code:** brand comparisons and scores are computed by the workflow, so the AI only writes, not compares.
 - **Fact-checked:** a LangGraph agent checks every claim against the data and fixes mistakes before delivery.
 - **Grounded recommendations:** based on official Google and GEO guidelines (RAG with Pinecone), with sources.
+- **Visibility score:** a simple score per brand (Google %, AI %, overall) shows the winner in 5 seconds.
+- **Hidden competitors:** shows brands the AI recommends that you're not tracking (e.g. OTTO for Zalando).
+- **Designed email report:** score bars, pie chart, color-coded tables, top 3 actions and who ranks in the Google top 3.
 - **Repeatable:** same queries, competitors and format every time, so visibility can be tracked over time.
 - **Automated:** one form submission → multiple queries × brands × sources → finished report in your inbox in ~2–3 minutes.
-- **Visibility score:** a simple score per brand (Google %, AI %, overall) shows the winner in 5 seconds.
 
 ---
 
@@ -30,12 +32,13 @@ You can ask ChatGPT "Is Zalando visible online?", but you'd get a one-off opinio
 
 | Report | Key insight |
 |---|---|
-| [Zalando vs ABOUT YOU, ASOS, Shein, H&M](reports/zalando_report_2026-11-11.md) | Zalando scores 100% overall vs ABOUT YOU 63%. ASOS has 0% Google but 100% AI visibility. |
-| [Adidas vs Nike, Puma, New Balance](reports/adidas_report_2026-11-11.md) | No brand reaches Google's top 10 for generic queries (review sites dominate), but Adidas leads AI answers (100% AI visibility, first among tracked brands in all 4). |
+| [Zalando vs ABOUT YOU, ASOS, Shein, H&M](reports/zalando_report_2026-11-12.md) | Zalando leads AI answers, but ABOUT YOU wins Google on most queries. ASOS is invisible on Google yet strong in AI answers, and untracked brands like OTTO show up in AI recommendations. |
+| [Adidas vs Nike, Puma, New Balance](reports/adidas_report_2026-11-12.md) | No brand reaches Google's top 10 for generic queries (review sites dominate), but Adidas leads AI answers among the tracked brands. |
 
 **The report as it arrives by email:**
 
-![Email report](docs/email_report.png)
+![Email report part 1](docs/email_report_1.png)
+![Email report part 2](docs/email_report_2.png)
 
 ---
 
@@ -52,13 +55,13 @@ flowchart TD
     E --> F[OpenAI: AI answer check]
     F --> G[Combine Google + AI]
     G --> H[NewsAPI: brand news + relevance filter]
-    H --> I[Build final dataset]
+    H --> I[Build final dataset + hidden competitors]
     I --> J[Pinecone RAG: SEO/GEO guidelines]
     J --> K[Key facts + visibility scores calculated in code]
     K --> L[OpenAI: write report]
     L --> M[LangGraph fact-checker on Render]
     M --> N[Report file .md]
-    N --> O[Email delivery]
+    N --> O[Designed HTML email + report attachment]
 ```
 
 **LangGraph fact-checker** (`langgraph_helper/fact_checker.py`):
@@ -72,8 +75,8 @@ flowchart LR
     V -->|no issues| E[Final report ✅]
 ```
 
-- **check_facts:** finds suspected errors, each must cite a calculated key fact
-- **verify_issues:** a second check removes false alarms
+- **check_facts:** finds suspected errors in the text, each must cite a calculated key fact (tables are skipped, as they come straight from the data)
+- **verify_issues:** a second check with the full rankings and scores removes false alarms
 - **fix_report:** fixes only verified errors, max 2 rounds
 
 ---
@@ -95,12 +98,14 @@ flowchart LR
 | Pinecone | RAG over SEO/GEO guidelines ([sources](rag_docs/sources.md)) |
 | Gmail (SMTP) | Report delivery |
 | Render | Hosts the LangGraph fact-checker API |
+| QuickChart | Pie chart image in the email |
 
 ---
 
 ## Error handling
 
 - **Input validation:** stops with a clear message if required fields are missing
+- **Input limits:** max 4 competitors and 6 queries; the brand can't also be listed as a competitor
 - **Retries:** all API calls retry automatically
 - **Continue on error:** failed APIs don't crash the run; missing data is flagged and listed in report section 7
 - **Fact-checker fallback:** if the LangGraph service is unavailable, the original report is used and marked
@@ -114,19 +119,23 @@ flowchart LR
 **1. Clone and configure**
 ```bash
 git clone https://github.com/barsha-mishra/ai-search-visibility-agent.git
+pip install -r requirements.txt
 ```
-Copy `.env.example` to `.env` and add your API keys.
+Copy `.env.example` to `.env` and add your API keys. Check them with:
+```bash
+python test_keys.py
+```
 
 **2. RAG (one time)**
 - Create the Pinecone index: `python create_index.py`
 - Import `n8n/rag_load_docs.json` into n8n and upload the PDFs listed in `rag_docs/sources.md`
 
 **3. LangGraph fact-checker**
-- Deployed on Render: `YOUR-RENDER-URL`
+- Deployed on Render: https://ai-search-visibility-agent.onrender.com
 - Local test:
 ```bash
 pip install -r langgraph_helper/requirements.txt
-python langgraph_helper/fact_checker.py langgraph_helper/sample_data.json reports/zalando_report_2026-11-11.md
+python langgraph_helper/fact_checker.py langgraph_helper/sample_data.json reports/zalando_report_2026-11-12.md
 ```
 
 **4. Main workflow**
@@ -147,13 +156,14 @@ python langgraph_helper/fact_checker.py langgraph_helper/sample_data.json report
 │   ├── requirements.txt
 │   ├── sample_data.json                  # test data
 │   └── test_cases/                       # deliberately wrong report + fixed result
-├── reports/                              # sample reports
+├── reports/                              # sample reports + report template
+├── docs/                                 # workflow + email screenshots
 ├── rag_docs/sources.md                   # RAG document sources
 ├── stack_decision.md
 ├── gtm_future_sprints.md
-├── workflow.md
-├── create_index.py
-├── test_keys.py
+├── create_index.py                       # creates the Pinecone index
+├── test_keys.py                          # tests all API keys
+├── requirements.txt
 └── .env.example
 ```
 
@@ -164,12 +174,14 @@ python langgraph_helper/fact_checker.py langgraph_helper/sample_data.json report
 - AI visibility is measured via the OpenAI API, not the ChatGPT app (no live web browsing, no personalization)
 - AI mention ranks (#1, #2…) are the order among **tracked brands only**
 - Brand matching is name-based (e.g. "H&M" / hm.com can be missed)
-- Search results change daily, so each report is a snapshot
+- Hidden competitors are detected from brand names in bold in the AI answers, so some may be missed
+- Search results and AI answers change daily, so each report is a snapshot
+- The pie chart uses QuickChart (external image service); some email apps hide images until you click "Display images"
 - Render free tier sleeps when idle (handled by the wake-up step)
 
 ## Next steps
 
-See [gtm_future_sprints.md](gtm_future_sprints.md). Planned improvements: visibility score per brand, weekly scheduled runs, results history in Google Sheets, checking more AI assistants (Claude, Perplexity, Gemini).
+See [gtm_future_sprints.md](gtm_future_sprints.md). Planned improvements: weekly scheduled runs, results history in Google Sheets, more AI assistants (Claude, Perplexity, Gemini), report language choice (English/German).
 
 ---
 

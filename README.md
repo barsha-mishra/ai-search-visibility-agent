@@ -200,4 +200,15 @@ See [gtm_future_sprints.md](gtm_future_sprints.md). Planned improvements: weekly
 
 ---
 
+## Demo
+   🎥 [Watch the demo recording](https://www.loom.com/share/9eb2b0b047a647e69a766991eb19f6fa)
+
+---
+
+## Presentation
+
+📊 [Project 3 slides (PDF)](https://docs.google.com/presentation/d/1p4rRECPS00pic_pMXKWv_8_ZZ7LwkRo2/edit?usp=sharing&ouid=108020012516012995498&rtpof=true&sd=true)
+
+---
+
 Built by **Barsha Mishra** as Project 3 of the Ironhack AI Consulting & Integration Bootcamp.
